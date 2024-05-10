@@ -1,5 +1,5 @@
 {
-  "name": "@order-management/server",
+  "name": "@order-management-dot-net/server",
   "private": true,
   "scripts": {
     "start": "nest start",
