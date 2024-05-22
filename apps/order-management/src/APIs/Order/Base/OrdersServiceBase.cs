@@ -98,6 +98,38 @@ public abstract class OrdersServiceBase : IOrdersService
     }
 
     /// <summary>
+    /// Get a Customer record for Orders
+    /// </summary>
+    public async Task<CustomerDto> getCustomer(OrderIdDTO idDto)
+    {
+        var customer = await _context
+            .Customers.Where(order => order.Id == idDto.Id)
+            .Include(order => order.Workspace)
+            .FirstOrDefaultAsync();
+        if (todoItem == null)
+        {
+            throw new NotFoundException();
+        }
+        return order.Workspace.ToDto();
+    }
+
+    /// <summary>
+    /// Get a Product record for Orders
+    /// </summary>
+    public async Task<ProductDto> getProduct(OrderIdDTO idDto)
+    {
+        var product = await _context
+            .Products.Where(order => order.Id == idDto.Id)
+            .Include(order => order.Workspace)
+            .FirstOrDefaultAsync();
+        if (todoItem == null)
+        {
+            throw new NotFoundException();
+        }
+        return order.Workspace.ToDto();
+    }
+
+    /// <summary>
     /// Update one Orders
     /// </summary>
     public async Task updateOrder(OrderUpdateInput updateDto)

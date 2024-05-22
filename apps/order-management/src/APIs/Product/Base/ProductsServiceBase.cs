@@ -141,14 +141,15 @@ public abstract class ProductsServiceBase : IProductsService
     /// </summary>
     public async Task<List<OrderDto>> findOrders(ProductIdDTO idDto, OrderFindMany OrderFindMany)
     {
-        var product = await _context.products.FirstAsync(x => x.Id == idDto.Id);
+        var orders = await _context
+            .Orders.Where(a => a.Products.Any(order => order.Id == idDto.Id))
+            .ApplyWhere(orderFindMany.Where)
+            .ApplySkip(orderFindMany.Skip)
+            .ApplyTake(orderFindMany.Take)
+            .ApplyOrderBy(orderFindMany.SortBy)
+            .ToListAsync();
 
-        if (product == null)
-        {
-            throw new NotFoundException();
-        }
-
-        return product.Orders.Select(order => order.ToDto()).ToList();
+        return orders.Select(x => x.ToDto());
     }
 
     /// <summary>

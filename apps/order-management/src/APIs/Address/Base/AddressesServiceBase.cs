@@ -65,14 +65,15 @@ public abstract class AddressesServiceBase : IAddressesService
         CustomerFindMany CustomerFindMany
     )
     {
-        var address = await _context.addresses.FirstAsync(x => x.Id == idDto.Id);
+        var customers = await _context
+            .Customers.Where(a => a.Addresses.Any(customer => customer.Id == idDto.Id))
+            .ApplyWhere(customerFindMany.Where)
+            .ApplySkip(customerFindMany.Skip)
+            .ApplyTake(customerFindMany.Take)
+            .ApplyOrderBy(customerFindMany.SortBy)
+            .ToListAsync();
 
-        if (address == null)
-        {
-            throw new NotFoundException();
-        }
-
-        return address.Customers.Select(customer => customer.ToDto()).ToList();
+        return customers.Select(x => x.ToDto());
     }
 
     /// <summary>

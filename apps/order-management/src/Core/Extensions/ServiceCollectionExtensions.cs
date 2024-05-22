@@ -1,11 +1,17 @@
-using MyService.APIs;
+using OrderManagementDotNet.APIs;
 
-namespace MyService;
+namespace OrderManagementDotNet;
 
-public static class ServiceCollectionExtensions
+public class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Add services to the container.
+    /// </summary>
     public static void RegisterServices(this IServiceCollection services)
     {
-        // Add services to the container.
+        services.AddScoped<IOrdersService, OrdersService>();
+        services.AddScoped<ICustomersService, CustomersService>();
+        services.AddScoped<IAddressesService, AddressesService>();
+        services.AddScoped<IProductsService, ProductsService>();
     }
 }

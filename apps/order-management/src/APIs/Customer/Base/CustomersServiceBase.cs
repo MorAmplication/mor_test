@@ -102,14 +102,31 @@ public abstract class CustomersServiceBase : ICustomersService
     /// </summary>
     public async Task<List<OrderDto>> findOrders(CustomerIdDTO idDto, OrderFindMany OrderFindMany)
     {
-        var customer = await _context.customers.FirstAsync(x => x.Id == idDto.Id);
+        var orders = await _context
+            .Orders.Where(a => a.Customers.Any(order => order.Id == idDto.Id))
+            .ApplyWhere(orderFindMany.Where)
+            .ApplySkip(orderFindMany.Skip)
+            .ApplyTake(orderFindMany.Take)
+            .ApplyOrderBy(orderFindMany.SortBy)
+            .ToListAsync();
 
-        if (customer == null)
+        return orders.Select(x => x.ToDto());
+    }
+
+    /// <summary>
+    /// Get a Address record for Customer
+    /// </summary>
+    public async Task<AddressDto> getAddress(CustomerIdDTO idDto)
+    {
+        var address = await _context
+            .Addresses.Where(customer => customer.Id == idDto.Id)
+            .Include(customer => customer.Workspace)
+            .FirstOrDefaultAsync();
+        if (todoItem == null)
         {
             throw new NotFoundException();
         }
-
-        return customer.Orders.Select(order => order.ToDto()).ToList();
+        return customer.Workspace.ToDto();
     }
 
     /// <summary>
