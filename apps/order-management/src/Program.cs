@@ -1,8 +1,6 @@
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using MyService;
-using MyService.APIs;
-using MyService.Infrastructure;
+using OrderManagementDotNet;
+using OrderManagementDotNet.APIs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,18 +11,11 @@ builder.Services.RegisterServices();
 
 builder.Services.AddApiAuthentication();
 
-// Add a DbContext to the container
-builder.Services.AddDbContext<MyServiceContext>(opt =>
-    // opt.UseInMemoryDatabase("TodoList")
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DbContext"))
-);
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
     options.UseOpenApiAuthentication();
-    // using System.Reflection;
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
@@ -43,7 +34,6 @@ builder.Services.AddCors(builder =>
         }
     );
 });
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -54,8 +44,8 @@ using (var scope = app.Services.CreateScope())
 
 app.UseApiAuthentication();
 app.UseCors();
+app.MapGraphQLEndpoints();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -69,7 +59,7 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        // await SeedDevelopmentData.SeedDevUser(services, app.Configuration);
+        await SeedDevelopmentData.SeedDevUser(services, app.Configuration);
     }
 }
 
