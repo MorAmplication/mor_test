@@ -9,7 +9,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Create one Customer
     /// </summary>
-    public async Task<CustomerDto> createCustomer(CustomerCreateInput inputDto)
+    public async Task<CustomerDto> CreateCustomer(CustomerCreateInput inputDto)
     {
         var model = new Customer { Name = createDto.Name, };
         if (createDto.Id != null)
@@ -49,7 +49,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Connect multiple Orders records to Customer
     /// </summary>
-    public async Task connectOrders(CustomerIdDTO idDto, OrderIdDTO OrderId)
+    public async Task ConnectOrders(CustomerIdDto idDto, OrderIdDto[] ordersId)
     {
         var customer = await _context
             .Customers.Include(x => x.Orders)
@@ -75,7 +75,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Disconnect multiple Orders records from Customer
     /// </summary>
-    public async Task disconnectOrders(CustomerIdDTO idDto, OrderIdDTO OrderId)
+    public async Task DisconnectOrders(CustomerIdDto idDto, OrderIdDto[] ordersId)
     {
         var customer = await _context
             .Customers.Include(x => x.Orders)
@@ -100,7 +100,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Find multiple Orders records for Customer
     /// </summary>
-    public async Task<List<OrderDto>> findOrders(CustomerIdDTO idDto, OrderFindMany OrderFindMany)
+    public async Task<List<OrderDto>> FindOrders(CustomerIdDto idDto, OrderFindMany OrderFindMany)
     {
         var orders = await _context
             .Orders.Where(a => a.Customers.Any(order => order.Id == idDto.Id))
@@ -116,7 +116,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Get a Address record for Customer
     /// </summary>
-    public async Task<AddressDto> getAddress(CustomerIdDTO idDto)
+    public async Task<AddressDto> getAddress(CustomerIdDto idDto)
     {
         var address = await _context
             .Addresses.Where(customer => customer.Id == idDto.Id)
@@ -132,7 +132,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Update multiple Orders records for Customer
     /// </summary>
-    public async Task updateOrders(CustomerIdDTO idDto, OrderIdDTO OrderId)
+    public async Task UpdateOrders(CustomerIdDto idDto, OrderIdDto[] ordersId)
     {
         var customer = await _context
             .Customers.Include(t => t.Orders)
@@ -159,7 +159,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Delete one Customer
     /// </summary>
-    public async Task deleteCustomer(CustomerIdDTO inputDto)
+    public async Task DeleteCustomer(CustomerIdDto inputDto)
     {
         var customer = await _context.Customers.FindAsync(idDto.Id);
         if (customer == null)
@@ -174,7 +174,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Find many Customers
     /// </summary>
-    public async Task<List<CustomerDto>> customers(CustomerFindMany findManyArgs)
+    public async Task<List<CustomerDto>> Customers(CustomerFindMany findManyArgs)
     {
         var customers = await _context
             .Customers.Include(x => x.Orders)
@@ -191,7 +191,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Get one Customer
     /// </summary>
-    public async Task<CustomerDto> customer(CustomerIdDTO idDto)
+    public async Task<CustomerDto> Customer(CustomerIdDto idDto)
     {
         var customers = await this.Customers(
             new CustomerFindMany { Where = new CustomerWhereInput { Id = idDto.Id } }
@@ -208,7 +208,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Update one Customer
     /// </summary>
-    public async Task updateCustomer(CustomerUpdateInput updateDto)
+    public async Task UpdateCustomer(CustomerUpdateInput updateDto)
     {
         var customer = updateDto.ToModel(idDto);
 

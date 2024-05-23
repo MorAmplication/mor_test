@@ -9,7 +9,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Create one Orders
     /// </summary>
-    public async Task<OrderDto> createOrder(OrderCreateInput inputDto)
+    public async Task<OrderDto> CreateOrder(OrderCreateInput inputDto)
     {
         var model = new Order { Name = createDto.Name, };
         if (createDto.Id != null)
@@ -51,7 +51,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Delete one Orders
     /// </summary>
-    public async Task deleteOrder(OrderIdDTO inputDto)
+    public async Task DeleteOrder(OrderIdDto inputDto)
     {
         var order = await _context.Orders.FindAsync(idDto.Id);
         if (order == null)
@@ -66,7 +66,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Find many Orders
     /// </summary>
-    public async Task<List<OrderDto>> orders(OrderFindMany findManyArgs)
+    public async Task<List<OrderDto>> Orders(OrderFindMany findManyArgs)
     {
         var orders = await _context
             .Orders.Include(x => x.Customers)
@@ -83,7 +83,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Get one Orders
     /// </summary>
-    public async Task<OrderDto> order(OrderIdDTO idDto)
+    public async Task<OrderDto> Order(OrderIdDto idDto)
     {
         var orders = await this.Orders(
             new OrderFindMany { Where = new OrderWhereInput { Id = idDto.Id } }
@@ -100,7 +100,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Get a Customer record for Orders
     /// </summary>
-    public async Task<CustomerDto> getCustomer(OrderIdDTO idDto)
+    public async Task<CustomerDto> getCustomer(OrderIdDto idDto)
     {
         var customer = await _context
             .Customers.Where(order => order.Id == idDto.Id)
@@ -116,7 +116,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Get a Product record for Orders
     /// </summary>
-    public async Task<ProductDto> getProduct(OrderIdDTO idDto)
+    public async Task<ProductDto> getProduct(OrderIdDto idDto)
     {
         var product = await _context
             .Products.Where(order => order.Id == idDto.Id)
@@ -132,7 +132,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Update one Orders
     /// </summary>
-    public async Task updateOrder(OrderUpdateInput updateDto)
+    public async Task UpdateOrder(OrderUpdateInput updateDto)
     {
         var order = updateDto.ToModel(idDto);
 

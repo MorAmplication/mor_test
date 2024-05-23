@@ -9,7 +9,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Create one Product
     /// </summary>
-    public async Task<ProductDto> createProduct(ProductCreateInput inputDto)
+    public async Task<ProductDto> CreateProduct(ProductCreateInput inputDto)
     {
         var model = new Product { Name = createDto.Name, };
         if (createDto.Id != null)
@@ -40,7 +40,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Delete one Product
     /// </summary>
-    public async Task deleteProduct(ProductIdDTO inputDto)
+    public async Task DeleteProduct(ProductIdDto inputDto)
     {
         var product = await _context.Products.FindAsync(idDto.Id);
         if (product == null)
@@ -55,7 +55,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Find many Products
     /// </summary>
-    public async Task<List<ProductDto>> products(ProductFindMany findManyArgs)
+    public async Task<List<ProductDto>> Products(ProductFindMany findManyArgs)
     {
         var products = await _context
             .Products.Include(x => x.Orders)
@@ -71,7 +71,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Get one Product
     /// </summary>
-    public async Task<ProductDto> product(ProductIdDTO idDto)
+    public async Task<ProductDto> Product(ProductIdDto idDto)
     {
         var products = await this.Products(
             new ProductFindMany { Where = new ProductWhereInput { Id = idDto.Id } }
@@ -88,7 +88,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Connect multiple Orders records to Product
     /// </summary>
-    public async Task connectOrders(ProductIdDTO idDto, OrderIdDTO OrderId)
+    public async Task ConnectOrders(ProductIdDto idDto, OrderIdDto[] ordersId)
     {
         var product = await _context
             .Products.Include(x => x.Orders)
@@ -114,7 +114,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Disconnect multiple Orders records from Product
     /// </summary>
-    public async Task disconnectOrders(ProductIdDTO idDto, OrderIdDTO OrderId)
+    public async Task DisconnectOrders(ProductIdDto idDto, OrderIdDto[] ordersId)
     {
         var product = await _context
             .Products.Include(x => x.Orders)
@@ -139,7 +139,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Find multiple Orders records for Product
     /// </summary>
-    public async Task<List<OrderDto>> findOrders(ProductIdDTO idDto, OrderFindMany OrderFindMany)
+    public async Task<List<OrderDto>> FindOrders(ProductIdDto idDto, OrderFindMany OrderFindMany)
     {
         var orders = await _context
             .Orders.Where(a => a.Products.Any(order => order.Id == idDto.Id))
@@ -155,7 +155,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Update multiple Orders records for Product
     /// </summary>
-    public async Task updateOrders(ProductIdDTO idDto, OrderIdDTO OrderId)
+    public async Task UpdateOrders(ProductIdDto idDto, OrderIdDto[] ordersId)
     {
         var product = await _context
             .Products.Include(t => t.Orders)
@@ -182,7 +182,7 @@ public abstract class ProductsServiceBase : IProductsService
     /// <summary>
     /// Update one Product
     /// </summary>
-    public async Task updateProduct(ProductUpdateInput updateDto)
+    public async Task UpdateProduct(ProductUpdateInput updateDto)
     {
         var product = updateDto.ToModel(idDto);
 

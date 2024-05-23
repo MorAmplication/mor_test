@@ -9,7 +9,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Connect multiple Customers records to Address
     /// </summary>
-    public async Task connectCustomers(AddressIdDTO idDto, CustomerIdDTO CustomerId)
+    public async Task ConnectCustomers(AddressIdDto idDto, CustomerIdDto[] customersId)
     {
         var address = await _context
             .Addresses.Include(x => x.Customers)
@@ -35,7 +35,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Disconnect multiple Customers records from Address
     /// </summary>
-    public async Task disconnectCustomers(AddressIdDTO idDto, CustomerIdDTO CustomerId)
+    public async Task DisconnectCustomers(AddressIdDto idDto, CustomerIdDto[] customersId)
     {
         var address = await _context
             .Addresses.Include(x => x.Customers)
@@ -60,8 +60,8 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Find multiple Customers records for Address
     /// </summary>
-    public async Task<List<CustomerDto>> findCustomers(
-        AddressIdDTO idDto,
+    public async Task<List<CustomerDto>> FindCustomers(
+        AddressIdDto idDto,
         CustomerFindMany CustomerFindMany
     )
     {
@@ -79,7 +79,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Update multiple Customers records for Address
     /// </summary>
-    public async Task updateCustomers(AddressIdDTO idDto, CustomerIdDTO CustomerId)
+    public async Task UpdateCustomers(AddressIdDto idDto, CustomerIdDto[] customersId)
     {
         var address = await _context
             .Addresses.Include(t => t.Customers)
@@ -106,7 +106,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Create one Address
     /// </summary>
-    public async Task<AddressDto> createAddress(AddressCreateInput inputDto)
+    public async Task<AddressDto> CreateAddress(AddressCreateInput inputDto)
     {
         var model = new Address { Name = createDto.Name, };
         if (createDto.Id != null)
@@ -139,7 +139,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Delete one Address
     /// </summary>
-    public async Task deleteAddress(AddressIdDTO inputDto)
+    public async Task DeleteAddress(AddressIdDto inputDto)
     {
         var address = await _context.Addresses.FindAsync(idDto.Id);
         if (address == null)
@@ -154,7 +154,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Find many Addresses
     /// </summary>
-    public async Task<List<AddressDto>> addresses(AddressFindMany findManyArgs)
+    public async Task<List<AddressDto>> Addresses(AddressFindMany findManyArgs)
     {
         var addresses = await _context
             .Addresses.Include(x => x.Customers)
@@ -170,7 +170,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Get one Address
     /// </summary>
-    public async Task<AddressDto> address(AddressIdDTO idDto)
+    public async Task<AddressDto> Address(AddressIdDto idDto)
     {
         var addresses = await this.Addresses(
             new AddressFindMany { Where = new AddressWhereInput { Id = idDto.Id } }
@@ -187,7 +187,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Update one Address
     /// </summary>
-    public async Task updateAddress(AddressUpdateInput updateDto)
+    public async Task UpdateAddress(AddressUpdateInput updateDto)
     {
         var address = updateDto.ToModel(idDto);
 
