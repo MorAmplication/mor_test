@@ -1,44 +1,46 @@
+using Microsoft.EntityFrameworkCore;
+using OrderManagementDotNet.APIs;
+using OrderManagementDotNet.APIs.Common;
 using OrderManagementDotNet.APIs.Dtos;
+using OrderManagementDotNet.APIs.Errors;
+using OrderManagementDotNet.APIs.Extensions;
+using OrderManagementDotNet.Infrastructure;
+using OrderManagementDotNet.Infrastructure.Models;
 
 namespace OrderManagementDotNet.APIs;
 
 public abstract class OrdersServiceBase : IOrdersService
 {
-    public OrdersServiceBase(OrdersServiceContext context) { }
+    protected readonly OrderManagementDotNetDbContext _context;
+
+    public OrdersServiceBase(OrderManagementDotNetDbContext context)
+    {
+        _context = context;
+    }
 
     /// <summary>
     /// Create one Orders
     /// </summary>
-    public async Task<OrderDto> CreateOrder(OrderCreateInput inputDto)
+    public async Task<OrderDto> CreateOrder(OrderCreateInput createDto)
     {
-        var model = new Order { Name = createDto.Name, };
+        var order = new Order
+        {
+            CreatedAt = createDto.CreatedAt,
+            UpdatedAt = createDto.UpdatedAt,
+            Quantity = createDto.Quantity,
+            Discount = createDto.Discount,
+            TotalPrice = createDto.TotalPrice
+        };
+
         if (createDto.Id != null)
         {
-            model.Id = createDto.Id.Value;
+            order.Id = createDto.Id;
         }
 
-        if (createDto.CustomerIds != null)
-        {
-            model.Customers = await _context
-                .Customers.Where(customer =>
-                    createDto.CustomerIds.Select(t => t.Id).Contains(customer.Id)
-                )
-                .ToListAsync();
-        }
-
-        if (createDto.ProductIds != null)
-        {
-            model.Products = await _context
-                .Products.Where(product =>
-                    createDto.ProductIds.Select(t => t.Id).Contains(product.Id)
-                )
-                .ToListAsync();
-        }
-
-        _context.Orders.Add(model);
+        _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<Order>(model.Id);
+        var result = await _context.FindAsync<Order>(order.Id);
 
         if (result == null)
         {
@@ -51,7 +53,7 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Delete one Orders
     /// </summary>
-    public async Task DeleteOrder(OrderIdDto inputDto)
+    public async Task DeleteOrder(OrderIdDto idDto)
     {
         var order = await _context.Orders.FindAsync(idDto.Id);
         if (order == null)
@@ -69,14 +71,13 @@ public abstract class OrdersServiceBase : IOrdersService
     public async Task<List<OrderDto>> Orders(OrderFindMany findManyArgs)
     {
         var orders = await _context
-            .Orders.Include(x => x.Customers)
-            .Include(x => x.Products)
+            .Orders.Include(x => x.Customer)
+            .Include(x => x.Product)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
             .ApplyOrderBy(findManyArgs.SortBy)
             .ToListAsync();
-
         return orders.ConvertAll(order => order.ToDto());
     }
 
@@ -100,59 +101,41 @@ public abstract class OrdersServiceBase : IOrdersService
     /// <summary>
     /// Get a Customer record for Orders
     /// </summary>
-    public async Task<CustomerDto> getCustomer(OrderIdDto idDto)
+    public async Task<CustomerDto> GetCustomer(OrderIdDto idDto)
     {
-        var customer = await _context
-            .Customers.Where(order => order.Id == idDto.Id)
-            .Include(order => order.Workspace)
+        var order = await _context
+            .Orders.Where(order => order.Id == idDto.Id)
+            .Include(order => order.Customer)
             .FirstOrDefaultAsync();
-        if (todoItem == null)
+        if (order == null)
         {
             throw new NotFoundException();
         }
-        return order.Workspace.ToDto();
+        return order.Customer.ToDto();
     }
 
     /// <summary>
     /// Get a Product record for Orders
     /// </summary>
-    public async Task<ProductDto> getProduct(OrderIdDto idDto)
+    public async Task<ProductDto> GetProduct(OrderIdDto idDto)
     {
-        var product = await _context
-            .Products.Where(order => order.Id == idDto.Id)
-            .Include(order => order.Workspace)
+        var order = await _context
+            .Orders.Where(order => order.Id == idDto.Id)
+            .Include(order => order.Product)
             .FirstOrDefaultAsync();
-        if (todoItem == null)
+        if (order == null)
         {
             throw new NotFoundException();
         }
-        return order.Workspace.ToDto();
+        return order.Product.ToDto();
     }
 
     /// <summary>
     /// Update one Orders
     /// </summary>
-    public async Task UpdateOrder(OrderUpdateInput updateDto)
+    public async Task UpdateOrder(OrderIdDto idDto, OrderUpdateInput updateDto)
     {
         var order = updateDto.ToModel(idDto);
-
-        if (updateDto.CustomerIds != null)
-        {
-            order.Customers = await _context
-                .Customers.Where(customer =>
-                    updateDto.CustomerIds.Select(t => t.Id).Contains(customer.Id)
-                )
-                .ToListAsync();
-        }
-
-        if (updateDto.ProductIds != null)
-        {
-            order.Products = await _context
-                .Products.Where(product =>
-                    updateDto.ProductIds.Select(t => t.Id).Contains(product.Id)
-                )
-                .ToListAsync();
-        }
 
         _context.Entry(order).State = EntityState.Modified;
 
@@ -162,7 +145,7 @@ public abstract class OrdersServiceBase : IOrdersService
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!OrderExists(idDto))
+            if (!_context.Orders.Any(e => e.Id == order.Id))
             {
                 throw new NotFoundException();
             }

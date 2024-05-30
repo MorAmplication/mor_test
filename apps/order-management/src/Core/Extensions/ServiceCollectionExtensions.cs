@@ -2,7 +2,7 @@ using OrderManagementDotNet.APIs;
 
 namespace OrderManagementDotNet;
 
-public class ServiceCollectionExtensions
+public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Add services to the container.

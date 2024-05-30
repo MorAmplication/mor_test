@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrderManagementDotNet.APIs;
 using OrderManagementDotNet.APIs.Dtos;
+using OrderManagementDotNet.APIs.Errors;
 
 namespace OrderManagementDotNet.APIs;
 
@@ -8,13 +9,17 @@ namespace OrderManagementDotNet.APIs;
 [ApiController()]
 public abstract class OrdersControllerBase : ControllerBase
 {
-    public OrdersControllerBase(IOrdersService service) { }
+    protected readonly IOrdersService _service;
+
+    public OrdersControllerBase(IOrdersService service)
+    {
+        _service = service;
+    }
 
     /// <summary>
     /// Create one Orders
     /// </summary>
     [HttpPost()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<OrderDto>> CreateOrder(OrderCreateInput input)
     {
         var order = await _service.CreateOrder(input);
@@ -26,8 +31,7 @@ public abstract class OrdersControllerBase : ControllerBase
     /// Delete one Orders
     /// </summary>
     [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task DeleteOrder([FromRoute()] OrderIdDto idDto)
+    public async Task<ActionResult> DeleteOrder([FromRoute()] OrderIdDto idDto)
     {
         try
         {
@@ -45,7 +49,6 @@ public abstract class OrdersControllerBase : ControllerBase
     /// Find many Orders
     /// </summary>
     [HttpGet()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<List<OrderDto>>> Orders([FromQuery()] OrderFindMany filter)
     {
         return Ok(await _service.Orders(filter));
@@ -55,7 +58,6 @@ public abstract class OrdersControllerBase : ControllerBase
     /// Get one Orders
     /// </summary>
     [HttpGet("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<OrderDto>> Order([FromRoute()] OrderIdDto idDto)
     {
         try
@@ -72,8 +74,7 @@ public abstract class OrdersControllerBase : ControllerBase
     /// Get a Customer record for Orders
     /// </summary>
     [HttpGet("{Id}/customers")]
-    [Authorize(Roles = "user")]
-    public async Task<List<CustomerDto>> GetCustomer([FromRoute()] OrderIdDto idDto)
+    public async Task<ActionResult<List<CustomerDto>>> GetCustomer([FromRoute()] OrderIdDto idDto)
     {
         var customer = await _service.GetCustomer(idDto);
         return Ok(customer);
@@ -83,8 +84,7 @@ public abstract class OrdersControllerBase : ControllerBase
     /// Get a Product record for Orders
     /// </summary>
     [HttpGet("{Id}/products")]
-    [Authorize(Roles = "user")]
-    public async Task<List<ProductDto>> GetProduct([FromRoute()] OrderIdDto idDto)
+    public async Task<ActionResult<List<ProductDto>>> GetProduct([FromRoute()] OrderIdDto idDto)
     {
         var product = await _service.GetProduct(idDto);
         return Ok(product);
@@ -94,10 +94,9 @@ public abstract class OrdersControllerBase : ControllerBase
     /// Update one Orders
     /// </summary>
     [HttpPatch("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task UpdateOrder(
+    public async Task<ActionResult> UpdateOrder(
         [FromRoute()] OrderIdDto idDto,
-        [FromQuery()] OrderUpdateInput OrderUpdateDto
+        [FromQuery()] OrderUpdateInput orderUpdateDto
     )
     {
         try

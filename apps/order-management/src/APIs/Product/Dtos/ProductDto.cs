@@ -1,16 +1,16 @@
-namespace Product.APIs.Dtos;
+namespace OrderManagementDotNet.APIs.Dtos;
 
 public class ProductDto : ProductIdDto
 {
-    public DateTime createdAt { get; }
+    public DateTime CreatedAt { get; set; }
 
-    public string updatedAt { get; }
+    public string UpdatedAt { get; set; }
 
-    public string? name { get; }
+    public string? Name { get; set; }
 
-    public double? itemPrice { get; }
+    public double? ItemPrice { get; set; }
 
-    public string? description { get; }
+    public string? Description { get; set; }
 
-    public List<OrderDto>? orders { get; }
+    public List<OrderIdDto>? Orders { get; set; }
 }

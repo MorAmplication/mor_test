@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrderManagementDotNet.APIs;
 using OrderManagementDotNet.APIs.Dtos;
+using OrderManagementDotNet.APIs.Errors;
 
 namespace OrderManagementDotNet.APIs;
 
@@ -8,13 +9,17 @@ namespace OrderManagementDotNet.APIs;
 [ApiController()]
 public abstract class ProductsControllerBase : ControllerBase
 {
-    public ProductsControllerBase(IProductsService service) { }
+    protected readonly IProductsService _service;
+
+    public ProductsControllerBase(IProductsService service)
+    {
+        _service = service;
+    }
 
     /// <summary>
     /// Create one Product
     /// </summary>
     [HttpPost()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<ProductDto>> CreateProduct(ProductCreateInput input)
     {
         var product = await _service.CreateProduct(input);
@@ -26,8 +31,7 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Delete one Product
     /// </summary>
     [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task DeleteProduct([FromRoute()] ProductIdDto idDto)
+    public async Task<ActionResult> DeleteProduct([FromRoute()] ProductIdDto idDto)
     {
         try
         {
@@ -45,7 +49,6 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Find many Products
     /// </summary>
     [HttpGet()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<List<ProductDto>>> Products([FromQuery()] ProductFindMany filter)
     {
         return Ok(await _service.Products(filter));
@@ -55,7 +58,6 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Get one Product
     /// </summary>
     [HttpGet("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<ProductDto>> Product([FromRoute()] ProductIdDto idDto)
     {
         try
@@ -72,15 +74,14 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Connect multiple Orders records to Product
     /// </summary>
     [HttpPost("{Id}/orders")]
-    [Authorize(Roles = "user")]
-    public async Task ConnectOrders(
+    public async Task<ActionResult> ConnectOrders(
         [FromRoute()] ProductIdDto idDto,
         [FromQuery()] OrderIdDto[] ordersId
     )
     {
         try
         {
-            await _service.ConnectOrders(idDto, orderIds);
+            await _service.ConnectOrders(idDto, ordersId);
         }
         catch (NotFoundException)
         {
@@ -94,15 +95,14 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Disconnect multiple Orders records from Product
     /// </summary>
     [HttpDelete("{Id}/orders")]
-    [Authorize(Roles = "user")]
-    public async Task DisconnectOrders(
+    public async Task<ActionResult> DisconnectOrders(
         [FromRoute()] ProductIdDto idDto,
         [FromBody()] OrderIdDto[] ordersId
     )
     {
         try
         {
-            await _service.DisconnectOrders(idDto, orderIds);
+            await _service.DisconnectOrders(idDto, ordersId);
         }
         catch (NotFoundException)
         {
@@ -116,8 +116,7 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Find multiple Orders records for Product
     /// </summary>
     [HttpGet("{Id}/orders")]
-    [Authorize(Roles = "user")]
-    public async Task<List<OrderDto>> FindOrders(
+    public async Task<ActionResult<List<OrderDto>>> FindOrders(
         [FromRoute()] ProductIdDto idDto,
         [FromQuery()] OrderFindMany filter
     )
@@ -136,15 +135,14 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Update multiple Orders records for Product
     /// </summary>
     [HttpPatch("{Id}/orders")]
-    [Authorize(Roles = "user")]
-    public async Task UpdateOrders(
+    public async Task<ActionResult> UpdateOrders(
         [FromRoute()] ProductIdDto idDto,
         [FromBody()] OrderIdDto[] ordersId
     )
     {
         try
         {
-            await _service.UpdateOrders(idDto, orderIds);
+            await _service.UpdateOrders(idDto, ordersId);
         }
         catch (NotFoundException)
         {
@@ -158,10 +156,9 @@ public abstract class ProductsControllerBase : ControllerBase
     /// Update one Product
     /// </summary>
     [HttpPatch("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task UpdateProduct(
+    public async Task<ActionResult> UpdateProduct(
         [FromRoute()] ProductIdDto idDto,
-        [FromQuery()] ProductUpdateInput ProductUpdateDto
+        [FromQuery()] ProductUpdateInput productUpdateDto
     )
     {
         try

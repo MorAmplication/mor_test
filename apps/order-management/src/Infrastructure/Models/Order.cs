@@ -1,34 +1,37 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OrderManagementDotNet.Infrastructure.Models;
 
 [Table("Orders")]
 public class Order
 {
     [Key()]
-    [required()]
-    public string id { get; }
+    [Required()]
+    public string Id { get; set; }
 
-    [required()]
-    public DateTime createdAt { get; }
+    [Required()]
+    public DateTime CreatedAt { get; set; }
 
-    [required()]
-    public string updatedAt { get; }
+    [Required()]
+    public string UpdatedAt { get; set; }
 
-    [Range(integer.MaxValue)]
-    public int quantity { get; }
+    [Range(optional.MaxValue)]
+    public int? Quantity { get; set; }
 
-    [Range(double.MaxValue)]
-    public double discount { get; }
+    [Range(optional.MaxValue)]
+    public double? Discount { get; set; }
 
-    [Range(integer.MaxValue)]
-    public int totalPrice { get; }
+    [Range(optional.MaxValue)]
+    public int? TotalPrice { get; set; }
 
-    public Customer customerId { get; }
+    public string CustomerId { get; set; }
 
-    [ForeignKey(nameof(customerId))]
-    public Customer customer { get; } = null;
+    [ForeignKey(nameof(CustomerId))]
+    public Customer? Customer { get; set; } = null;
 
-    public Product productId { get; }
+    public string ProductId { get; set; }
 
-    [ForeignKey(nameof(productId))]
-    public Product product { get; } = null;
+    [ForeignKey(nameof(ProductId))]
+    public Product? Product { get; set; } = null;
 }

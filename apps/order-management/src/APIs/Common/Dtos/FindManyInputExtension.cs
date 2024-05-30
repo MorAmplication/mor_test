@@ -1,6 +1,6 @@
 using System.Linq.Dynamic.Core;
 
-namespace MyService.APIs.Common;
+namespace OrderManagementDotNet.APIs.Common;
 
 public static class FindManyInputExtension
 {

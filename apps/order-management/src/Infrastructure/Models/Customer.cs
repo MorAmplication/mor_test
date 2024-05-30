@@ -1,33 +1,36 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OrderManagementDotNet.Infrastructure.Models;
 
 [Table("Customers")]
 public class Customer
 {
     [Key()]
-    [required()]
-    public string id { get; }
+    [Required()]
+    public string Id { get; set; }
 
-    [required()]
-    public DateTime createdAt { get; }
+    [Required()]
+    public DateTime CreatedAt { get; set; }
 
-    [required()]
-    public string updatedAt { get; }
-
-    [StringLength(1000)]
-    public string firstName { get; }
+    [Required()]
+    public string UpdatedAt { get; set; }
 
     [StringLength(1000)]
-    public string lastName { get; }
-
-    public string email { get; }
+    public string? FirstName { get; set; }
 
     [StringLength(1000)]
-    public string phone { get; }
+    public string? LastName { get; set; }
 
-    public List<Order> orders { get; } = new List<Order>();
+    public string? Email { get; set; }
 
-    public Address addressId { get; }
+    [StringLength(1000)]
+    public string? Phone { get; set; }
 
-    [ForeignKey(nameof(addressId))]
-    public Address address { get; } = null;
+    public List<Order>? Orders { get; set; } = new List<Order>();
+
+    public string AddressId { get; set; }
+
+    [ForeignKey(nameof(AddressId))]
+    public Address? Address { get; set; } = null;
 }

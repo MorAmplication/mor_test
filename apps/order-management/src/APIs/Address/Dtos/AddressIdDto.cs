@@ -1,6 +1,6 @@
-namespace Address.APIs.Dtos;
+namespace OrderManagementDotNet.APIs.Dtos;
 
 public class AddressIdDto
 {
-    public string id { get; }
+    public string Id { get; set; }
 }

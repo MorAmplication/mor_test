@@ -1,10 +1,22 @@
+using Microsoft.EntityFrameworkCore;
+using OrderManagementDotNet.APIs;
+using OrderManagementDotNet.APIs.Common;
 using OrderManagementDotNet.APIs.Dtos;
+using OrderManagementDotNet.APIs.Errors;
+using OrderManagementDotNet.APIs.Extensions;
+using OrderManagementDotNet.Infrastructure;
+using OrderManagementDotNet.Infrastructure.Models;
 
 namespace OrderManagementDotNet.APIs;
 
 public abstract class AddressesServiceBase : IAddressesService
 {
-    public AddressesServiceBase(AddressesServiceContext context) { }
+    protected readonly OrderManagementDotNetDbContext _context;
+
+    public AddressesServiceBase(OrderManagementDotNetDbContext context)
+    {
+        _context = context;
+    }
 
     /// <summary>
     /// Connect multiple Customers records to Address
@@ -27,8 +39,13 @@ public abstract class AddressesServiceBase : IAddressesService
             throw new NotFoundException();
         }
 
-        var newcustomers = customers.Except(address.customers);
-        address.customers.AddRange(newcustomers);
+        var customersToConnect = customers.Except(address.Customers);
+
+        foreach (var customer in customersToConnect)
+        {
+            address.Customers.Add(customer);
+        }
+
         await _context.SaveChangesAsync();
     }
 
@@ -40,7 +57,6 @@ public abstract class AddressesServiceBase : IAddressesService
         var address = await _context
             .Addresses.Include(x => x.Customers)
             .FirstOrDefaultAsync(x => x.Id == idDto.Id);
-
         if (address == null)
         {
             throw new NotFoundException();
@@ -52,7 +68,7 @@ public abstract class AddressesServiceBase : IAddressesService
 
         foreach (var customer in customers)
         {
-            address.Customers.Remove(customer);
+            address.Customers?.Remove(customer);
         }
         await _context.SaveChangesAsync();
     }
@@ -62,18 +78,18 @@ public abstract class AddressesServiceBase : IAddressesService
     /// </summary>
     public async Task<List<CustomerDto>> FindCustomers(
         AddressIdDto idDto,
-        CustomerFindMany CustomerFindMany
+        CustomerFindMany addressFindMany
     )
     {
         var customers = await _context
-            .Customers.Where(a => a.Addresses.Any(customer => customer.Id == idDto.Id))
-            .ApplyWhere(customerFindMany.Where)
-            .ApplySkip(customerFindMany.Skip)
-            .ApplyTake(customerFindMany.Take)
-            .ApplyOrderBy(customerFindMany.SortBy)
+            .Customers.Where(m => m.AddressId == idDto.Id)
+            .ApplyWhere(addressFindMany.Where)
+            .ApplySkip(addressFindMany.Skip)
+            .ApplyTake(addressFindMany.Take)
+            .ApplyOrderBy(addressFindMany.SortBy)
             .ToListAsync();
 
-        return customers.Select(x => x.ToDto());
+        return customers.Select(x => x.ToDto()).ToList();
     }
 
     /// <summary>
@@ -84,14 +100,13 @@ public abstract class AddressesServiceBase : IAddressesService
         var address = await _context
             .Addresses.Include(t => t.Customers)
             .FirstOrDefaultAsync(x => x.Id == idDto.Id);
-
         if (address == null)
         {
             throw new NotFoundException();
         }
 
         var customers = await _context
-            .Customers.Where(a => customerIdDtos.Select(x => x.Id).Contains(a.Id))
+            .Customers.Where(a => customersId.Select(x => x.Id).Contains(a.Id))
             .ToListAsync();
 
         if (customers.Count == 0)
@@ -106,27 +121,36 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Create one Address
     /// </summary>
-    public async Task<AddressDto> CreateAddress(AddressCreateInput inputDto)
+    public async Task<AddressDto> CreateAddress(AddressCreateInput createDto)
     {
-        var model = new Address { Name = createDto.Name, };
+        var address = new Address
+        {
+            CreatedAt = createDto.CreatedAt,
+            UpdatedAt = createDto.UpdatedAt,
+            Address_1 = createDto.Address_1,
+            Address_2 = createDto.Address_2,
+            City = createDto.City,
+            State = createDto.State,
+            Zip = createDto.Zip
+        };
+
         if (createDto.Id != null)
         {
-            model.Id = createDto.Id.Value;
+            address.Id = createDto.Id;
         }
-
-        if (createDto.CustomerIds != null)
+        if (createDto.Customers != null)
         {
-            model.Customers = await _context
+            address.Customers = await _context
                 .Customers.Where(customer =>
-                    createDto.CustomerIds.Select(t => t.Id).Contains(customer.Id)
+                    createDto.Customers.Select(t => t.Id).Contains(customer.Id)
                 )
                 .ToListAsync();
         }
 
-        _context.Addresses.Add(model);
+        _context.Addresses.Add(address);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<Address>(model.Id);
+        var result = await _context.FindAsync<Address>(address.Id);
 
         if (result == null)
         {
@@ -139,7 +163,7 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Delete one Address
     /// </summary>
-    public async Task DeleteAddress(AddressIdDto inputDto)
+    public async Task DeleteAddress(AddressIdDto idDto)
     {
         var address = await _context.Addresses.FindAsync(idDto.Id);
         if (address == null)
@@ -163,7 +187,6 @@ public abstract class AddressesServiceBase : IAddressesService
             .ApplyTake(findManyArgs.Take)
             .ApplyOrderBy(findManyArgs.SortBy)
             .ToListAsync();
-
         return addresses.ConvertAll(address => address.ToDto());
     }
 
@@ -187,15 +210,15 @@ public abstract class AddressesServiceBase : IAddressesService
     /// <summary>
     /// Update one Address
     /// </summary>
-    public async Task UpdateAddress(AddressUpdateInput updateDto)
+    public async Task UpdateAddress(AddressIdDto idDto, AddressUpdateInput updateDto)
     {
         var address = updateDto.ToModel(idDto);
 
-        if (updateDto.CustomerIds != null)
+        if (updateDto.Customers != null)
         {
             address.Customers = await _context
                 .Customers.Where(customer =>
-                    updateDto.CustomerIds.Select(t => t.Id).Contains(customer.Id)
+                    updateDto.Customers.Select(t => t.Id).Contains(customer.Id)
                 )
                 .ToListAsync();
         }
@@ -208,7 +231,7 @@ public abstract class AddressesServiceBase : IAddressesService
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!AddressExists(idDto))
+            if (!_context.Addresses.Any(e => e.Id == address.Id))
             {
                 throw new NotFoundException();
             }

@@ -1,6 +1,6 @@
-using MyService.APIs.Common.Attributes;
+using OrderManagementDotNet.APIs.Common.Attributes;
 
-namespace MyService.APIs.Common;
+namespace OrderManagementDotNet.APIs.Common;
 
 public abstract class FindManyInput<M, W> : PaginationInput, IFindManyInput<M, W>
     where W : class

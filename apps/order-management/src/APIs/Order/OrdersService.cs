@@ -1,7 +1,9 @@
+using OrderManagementDotNet.Infrastructure;
+
 namespace OrderManagementDotNet.APIs;
 
 public class OrdersService : OrdersServiceBase
 {
-    public OrdersService(OrdersServiceContext context)
+    public OrdersService(OrderManagementDotNetDbContext context)
         : base(context) { }
 }

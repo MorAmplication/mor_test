@@ -1,6 +1,7 @@
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using OrderManagementDotNet;
-using OrderManagementDotNet.APIs;
+using OrderManagementDotNet.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,13 +10,10 @@ builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true
 
 builder.Services.RegisterServices();
 
-builder.Services.AddApiAuthentication();
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.UseOpenApiAuthentication();
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
@@ -34,17 +32,12 @@ builder.Services.AddCors(builder =>
         }
     );
 });
+builder.Services.AddDbContext<OrderManagementDotNetDbContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    await RolesManager.SyncRoles(services, app.Configuration);
-}
-
-app.UseApiAuthentication();
 app.UseCors();
-app.MapGraphQLEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
@@ -59,7 +52,6 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        await SeedDevelopmentData.SeedDevUser(services, app.Configuration);
     }
 }
 

@@ -2,46 +2,66 @@ version: "3"
 services:
   server:
     build:
-      context: .
-      args:
-        NPM_LOG_LEVEL: notice
+      context: ./src
     ports:
-      - ${PORT}:3000
+      - 5202:8080
     environment:
-      BCRYPT_SALT: ${BCRYPT_SALT}
+      ASPNETCORE_HTTP_PORTS: 8080
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DbContext: Data Source=db,1433;Initial
+        Catalog=my-service-db;User
+        Id=sa;Password=SqlAdminChangeMe1234!;TrustServerCertificate=true;
       DB_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
-    depends_on:
-      - migrate
     restart: on-failure
+    profiles:
+      - complete
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
   migrate:
     build:
-      context: .
-      args:
-        NPM_LOG_LEVEL: notice
-    command: npm run db:init
-    working_dir: /app/server
-    environment:
-      BCRYPT_SALT: ${BCRYPT_SALT}
-      DB_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      context: ./src
+    entrypoint: sh
+    command: -c './DbMigrationsBundle --connection "$${MIGRATION_CONNECTION}"'
     depends_on:
       db:
         condition: service_healthy
+    environment:
+      MIGRATION_CONNECTION: Data Source=db,1433;Initial Catalog=my-service-db;User
+        Id=sa;Password=SqlAdminChangeMe1234!;TrustServerCertificate=true;
+      DB_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
   db:
     image: postgres:12
+    restart: unless-stopped
     ports:
       - ${DB_PORT}:5432
     environment:
+      MSSQL_SA_PASSWORD: SqlAdminChangeMe1234!
+      ACCEPT_EULA: Y
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - postgres:/var/lib/postgresql/data
     healthcheck:
       test:
         - CMD-SHELL
         - pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+        - -S
+        - localhost
+        - -U
+        - sa
+        - -P
+        - SqlAdminChangeMe1234!
+        - -Q
+        - SELECT 1
+        - -b
+        - -o
+        - /dev/null
       timeout: 45s
       interval: 10s
       retries: 10
+      start_period: 10s
+    volumes:
+      - postgres:/var/lib/postgresql/data
 volumes:
+  mssql: ~
   postgres: ~

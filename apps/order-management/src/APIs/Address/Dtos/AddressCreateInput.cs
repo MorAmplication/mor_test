@@ -1,22 +1,22 @@
-namespace Address.APIs.Dtos;
+namespace OrderManagementDotNet.APIs.Dtos;
 
 public class AddressCreateInput
 {
-    public string id { get; }
+    public string? Id { get; set; }
 
-    public DateTime createdAt { get; }
+    public DateTime CreatedAt { get; set; }
 
-    public string updatedAt { get; }
+    public string UpdatedAt { get; set; }
 
-    public string? address_1 { get; }
+    public string? Address_1 { get; set; }
 
-    public string? address_2 { get; }
+    public string? Address_2 { get; set; }
 
-    public string? city { get; }
+    public string? City { get; set; }
 
-    public string? state { get; }
+    public string? State { get; set; }
 
-    public int? zip { get; }
+    public int? Zip { get; set; }
 
-    public List<CustomerDto>? customers { get; }
+    public List<CustomerIdDto>? Customers { get; set; }
 }

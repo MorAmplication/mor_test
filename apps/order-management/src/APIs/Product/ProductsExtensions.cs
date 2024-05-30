@@ -3,25 +3,42 @@ using OrderManagementDotNet.Infrastructure.Models;
 
 namespace OrderManagementDotNet.APIs.Extensions;
 
-public class ProductsExtensions
+public static class ProductsExtensions
 {
-    public static Product ToModel(this ProductUpdateInput updateDto, ProductIdDto idDto)
-    {
-        var product = new Product { Id = idDto.Id, Name = updateDto.Name, };
-        return product;
-    }
-
     public static ProductDto ToDto(this Product model)
     {
         return new ProductDto
         {
-            id = model.id,
-            createdAt = model.createdAt,
-            updatedAt = model.updatedAt,
-            name = model.name,
-            itemPrice = model.itemPrice,
-            description = model.description,
-            orders = model.Orders.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
+            Id = model.Id,
+            CreatedAt = model.CreatedAt,
+            UpdatedAt = model.UpdatedAt,
+            Name = model.Name,
+            ItemPrice = model.ItemPrice,
+            Description = model.Description,
+            Orders = model.Orders.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
         };
+    }
+
+    public static Product ToModel(this ProductUpdateInput updateDto, ProductIdDto idDto)
+    {
+        var product = new Product
+        {
+            Id = idDto.Id,
+            Name = updateDto.Name,
+            ItemPrice = updateDto.ItemPrice,
+            Description = updateDto.Description
+        };
+
+        // map required fields
+        if (updateDto.CreatedAt != null)
+        {
+            product.CreatedAt = updateDto.CreatedAt.Value;
+        }
+        if (updateDto.UpdatedAt != null)
+        {
+            product.UpdatedAt = updateDto.UpdatedAt;
+        }
+
+        return product;
     }
 }

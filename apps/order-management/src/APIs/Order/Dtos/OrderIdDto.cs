@@ -1,6 +1,6 @@
-namespace Order.APIs.Dtos;
+namespace OrderManagementDotNet.APIs.Dtos;
 
 public class OrderIdDto
 {
-    public string id { get; }
+    public string Id { get; set; }
 }

@@ -1,32 +1,35 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OrderManagementDotNet.Infrastructure.Models;
 
 [Table("Addresses")]
 public class Address
 {
     [Key()]
-    [required()]
-    public string id { get; }
+    [Required()]
+    public string Id { get; set; }
 
-    [required()]
-    public DateTime createdAt { get; }
+    [Required()]
+    public DateTime CreatedAt { get; set; }
 
-    [required()]
-    public string updatedAt { get; }
-
-    [StringLength(1000)]
-    public string address_1 { get; }
+    [Required()]
+    public string UpdatedAt { get; set; }
 
     [StringLength(1000)]
-    public string address_2 { get; }
+    public string? Address_1 { get; set; }
 
     [StringLength(1000)]
-    public string city { get; }
+    public string? Address_2 { get; set; }
 
     [StringLength(1000)]
-    public string state { get; }
+    public string? City { get; set; }
 
-    [Range(integer.MaxValue)]
-    public int zip { get; }
+    [StringLength(1000)]
+    public string? State { get; set; }
 
-    public List<Customer> customers { get; } = new List<Customer>();
+    [Range(optional.MaxValue)]
+    public int? Zip { get; set; }
+
+    public List<Customer>? Customers { get; set; } = new List<Customer>();
 }

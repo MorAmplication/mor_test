@@ -1,4 +1,4 @@
-namespace MyService.APIs.Common;
+namespace OrderManagementDotNet.APIs.Common;
 
 public interface IFindManyInput<M, W>
 {

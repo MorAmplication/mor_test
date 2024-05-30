@@ -1,20 +1,20 @@
-namespace Customer.APIs.Dtos;
+namespace OrderManagementDotNet.APIs.Dtos;
 
 public class CustomerDto : CustomerIdDto
 {
-    public DateTime createdAt { get; }
+    public DateTime CreatedAt { get; set; }
 
-    public string updatedAt { get; }
+    public string UpdatedAt { get; set; }
 
-    public string? firstName { get; }
+    public string? FirstName { get; set; }
 
-    public string? lastName { get; }
+    public string? LastName { get; set; }
 
-    public string? email { get; }
+    public string? Email { get; set; }
 
-    public string? phone { get; }
+    public string? Phone { get; set; }
 
-    public List<OrderDto>? orders { get; }
+    public List<OrderIdDto>? Orders { get; set; }
 
-    public AddressDto? address { get; }
+    public AddressIdDto? Address { get; set; }
 }

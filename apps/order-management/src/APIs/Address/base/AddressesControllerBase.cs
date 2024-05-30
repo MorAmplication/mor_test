@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrderManagementDotNet.APIs;
 using OrderManagementDotNet.APIs.Dtos;
+using OrderManagementDotNet.APIs.Errors;
 
 namespace OrderManagementDotNet.APIs;
 
@@ -8,21 +9,25 @@ namespace OrderManagementDotNet.APIs;
 [ApiController()]
 public abstract class AddressesControllerBase : ControllerBase
 {
-    public AddressesControllerBase(IAddressesService service) { }
+    protected readonly IAddressesService _service;
+
+    public AddressesControllerBase(IAddressesService service)
+    {
+        _service = service;
+    }
 
     /// <summary>
     /// Connect multiple Customers records to Address
     /// </summary>
     [HttpPost("{Id}/customers")]
-    [Authorize(Roles = "user")]
-    public async Task ConnectCustomers(
+    public async Task<ActionResult> ConnectCustomers(
         [FromRoute()] AddressIdDto idDto,
         [FromQuery()] CustomerIdDto[] customersId
     )
     {
         try
         {
-            await _service.ConnectCustomers(idDto, customerIds);
+            await _service.ConnectCustomers(idDto, customersId);
         }
         catch (NotFoundException)
         {
@@ -36,15 +41,14 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Disconnect multiple Customers records from Address
     /// </summary>
     [HttpDelete("{Id}/customers")]
-    [Authorize(Roles = "user")]
-    public async Task DisconnectCustomers(
+    public async Task<ActionResult> DisconnectCustomers(
         [FromRoute()] AddressIdDto idDto,
         [FromBody()] CustomerIdDto[] customersId
     )
     {
         try
         {
-            await _service.DisconnectCustomers(idDto, customerIds);
+            await _service.DisconnectCustomers(idDto, customersId);
         }
         catch (NotFoundException)
         {
@@ -58,8 +62,7 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Find multiple Customers records for Address
     /// </summary>
     [HttpGet("{Id}/customers")]
-    [Authorize(Roles = "user")]
-    public async Task<List<CustomerDto>> FindCustomers(
+    public async Task<ActionResult<List<CustomerDto>>> FindCustomers(
         [FromRoute()] AddressIdDto idDto,
         [FromQuery()] CustomerFindMany filter
     )
@@ -78,15 +81,14 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Update multiple Customers records for Address
     /// </summary>
     [HttpPatch("{Id}/customers")]
-    [Authorize(Roles = "user")]
-    public async Task UpdateCustomers(
+    public async Task<ActionResult> UpdateCustomers(
         [FromRoute()] AddressIdDto idDto,
         [FromBody()] CustomerIdDto[] customersId
     )
     {
         try
         {
-            await _service.UpdateCustomers(idDto, customerIds);
+            await _service.UpdateCustomers(idDto, customersId);
         }
         catch (NotFoundException)
         {
@@ -100,7 +102,6 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Create one Address
     /// </summary>
     [HttpPost()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<AddressDto>> CreateAddress(AddressCreateInput input)
     {
         var address = await _service.CreateAddress(input);
@@ -112,8 +113,7 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Delete one Address
     /// </summary>
     [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task DeleteAddress([FromRoute()] AddressIdDto idDto)
+    public async Task<ActionResult> DeleteAddress([FromRoute()] AddressIdDto idDto)
     {
         try
         {
@@ -131,7 +131,6 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Find many Addresses
     /// </summary>
     [HttpGet()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<List<AddressDto>>> Addresses(
         [FromQuery()] AddressFindMany filter
     )
@@ -143,7 +142,6 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Get one Address
     /// </summary>
     [HttpGet("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<AddressDto>> Address([FromRoute()] AddressIdDto idDto)
     {
         try
@@ -160,10 +158,9 @@ public abstract class AddressesControllerBase : ControllerBase
     /// Update one Address
     /// </summary>
     [HttpPatch("{Id}")]
-    [Authorize(Roles = "user")]
-    public async Task UpdateAddress(
+    public async Task<ActionResult> UpdateAddress(
         [FromRoute()] AddressIdDto idDto,
-        [FromQuery()] AddressUpdateInput AddressUpdateDto
+        [FromQuery()] AddressUpdateInput addressUpdateDto
     )
     {
         try

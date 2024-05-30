@@ -1,26 +1,29 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace OrderManagementDotNet.Infrastructure.Models;
 
 [Table("Products")]
 public class Product
 {
     [Key()]
-    [required()]
-    public string id { get; }
+    [Required()]
+    public string Id { get; set; }
 
-    [required()]
-    public DateTime createdAt { get; }
+    [Required()]
+    public DateTime CreatedAt { get; set; }
 
-    [required()]
-    public string updatedAt { get; }
-
-    [StringLength(1000)]
-    public string name { get; }
-
-    [Range(double.MaxValue)]
-    public double itemPrice { get; }
+    [Required()]
+    public string UpdatedAt { get; set; }
 
     [StringLength(1000)]
-    public string description { get; }
+    public string? Name { get; set; }
 
-    public List<Order> orders { get; } = new List<Order>();
+    [Range(optional.MaxValue)]
+    public double? ItemPrice { get; set; }
+
+    [StringLength(1000)]
+    public string? Description { get; set; }
+
+    public List<Order>? Orders { get; set; } = new List<Order>();
 }

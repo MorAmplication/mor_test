@@ -1,20 +1,20 @@
-namespace Order.APIs.Dtos;
+namespace OrderManagementDotNet.APIs.Dtos;
 
 public class OrderUpdateInput
 {
-    public string id { get; }
+    public string? Id { get; set; }
 
-    public DateTime createdAt { get; }
+    public DateTime? CreatedAt { get; set; }
 
-    public string updatedAt { get; }
+    public string? UpdatedAt { get; set; }
 
-    public int? quantity { get; }
+    public int? Quantity { get; set; }
 
-    public double? discount { get; }
+    public double? Discount { get; set; }
 
-    public int? totalPrice { get; }
+    public int? TotalPrice { get; set; }
 
-    public CustomerDto? customer { get; }
+    public CustomerIdDto? Customer { get; set; }
 
-    public ProductDto? product { get; }
+    public ProductIdDto? Product { get; set; }
 }

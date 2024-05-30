@@ -1,42 +1,53 @@
+using Microsoft.EntityFrameworkCore;
+using OrderManagementDotNet.APIs;
+using OrderManagementDotNet.APIs.Common;
 using OrderManagementDotNet.APIs.Dtos;
+using OrderManagementDotNet.APIs.Errors;
+using OrderManagementDotNet.APIs.Extensions;
+using OrderManagementDotNet.Infrastructure;
+using OrderManagementDotNet.Infrastructure.Models;
 
 namespace OrderManagementDotNet.APIs;
 
 public abstract class CustomersServiceBase : ICustomersService
 {
-    public CustomersServiceBase(CustomersServiceContext context) { }
+    protected readonly OrderManagementDotNetDbContext _context;
+
+    public CustomersServiceBase(OrderManagementDotNetDbContext context)
+    {
+        _context = context;
+    }
 
     /// <summary>
     /// Create one Customer
     /// </summary>
-    public async Task<CustomerDto> CreateCustomer(CustomerCreateInput inputDto)
+    public async Task<CustomerDto> CreateCustomer(CustomerCreateInput createDto)
     {
-        var model = new Customer { Name = createDto.Name, };
+        var customer = new Customer
+        {
+            CreatedAt = createDto.CreatedAt,
+            UpdatedAt = createDto.UpdatedAt,
+            FirstName = createDto.FirstName,
+            LastName = createDto.LastName,
+            Email = createDto.Email,
+            Phone = createDto.Phone
+        };
+
         if (createDto.Id != null)
         {
-            model.Id = createDto.Id.Value;
+            customer.Id = createDto.Id;
         }
-
-        if (createDto.OrderIds != null)
+        if (createDto.Orders != null)
         {
-            model.Orders = await _context
-                .Orders.Where(order => createDto.OrderIds.Select(t => t.Id).Contains(order.Id))
+            customer.Orders = await _context
+                .Orders.Where(order => createDto.Orders.Select(t => t.Id).Contains(order.Id))
                 .ToListAsync();
         }
 
-        if (createDto.AddressIds != null)
-        {
-            model.Addresses = await _context
-                .Addresses.Where(address =>
-                    createDto.AddressIds.Select(t => t.Id).Contains(address.Id)
-                )
-                .ToListAsync();
-        }
-
-        _context.Customers.Add(model);
+        _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
 
-        var result = await _context.FindAsync<Customer>(model.Id);
+        var result = await _context.FindAsync<Customer>(customer.Id);
 
         if (result == null)
         {
@@ -67,8 +78,13 @@ public abstract class CustomersServiceBase : ICustomersService
             throw new NotFoundException();
         }
 
-        var neworders = orders.Except(customer.orders);
-        customer.orders.AddRange(neworders);
+        var ordersToConnect = orders.Except(customer.Orders);
+
+        foreach (var order in ordersToConnect)
+        {
+            customer.Orders.Add(order);
+        }
+
         await _context.SaveChangesAsync();
     }
 
@@ -80,7 +96,6 @@ public abstract class CustomersServiceBase : ICustomersService
         var customer = await _context
             .Customers.Include(x => x.Orders)
             .FirstOrDefaultAsync(x => x.Id == idDto.Id);
-
         if (customer == null)
         {
             throw new NotFoundException();
@@ -92,7 +107,7 @@ public abstract class CustomersServiceBase : ICustomersService
 
         foreach (var order in orders)
         {
-            customer.Orders.Remove(order);
+            customer.Orders?.Remove(order);
         }
         await _context.SaveChangesAsync();
     }
@@ -100,33 +115,36 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Find multiple Orders records for Customer
     /// </summary>
-    public async Task<List<OrderDto>> FindOrders(CustomerIdDto idDto, OrderFindMany OrderFindMany)
+    public async Task<List<OrderDto>> FindOrders(
+        CustomerIdDto idDto,
+        OrderFindMany customerFindMany
+    )
     {
         var orders = await _context
-            .Orders.Where(a => a.Customers.Any(order => order.Id == idDto.Id))
-            .ApplyWhere(orderFindMany.Where)
-            .ApplySkip(orderFindMany.Skip)
-            .ApplyTake(orderFindMany.Take)
-            .ApplyOrderBy(orderFindMany.SortBy)
+            .Orders.Where(m => m.CustomerId == idDto.Id)
+            .ApplyWhere(customerFindMany.Where)
+            .ApplySkip(customerFindMany.Skip)
+            .ApplyTake(customerFindMany.Take)
+            .ApplyOrderBy(customerFindMany.SortBy)
             .ToListAsync();
 
-        return orders.Select(x => x.ToDto());
+        return orders.Select(x => x.ToDto()).ToList();
     }
 
     /// <summary>
     /// Get a Address record for Customer
     /// </summary>
-    public async Task<AddressDto> getAddress(CustomerIdDto idDto)
+    public async Task<AddressDto> GetAddress(CustomerIdDto idDto)
     {
-        var address = await _context
-            .Addresses.Where(customer => customer.Id == idDto.Id)
-            .Include(customer => customer.Workspace)
+        var customer = await _context
+            .Customers.Where(customer => customer.Id == idDto.Id)
+            .Include(customer => customer.Address)
             .FirstOrDefaultAsync();
-        if (todoItem == null)
+        if (customer == null)
         {
             throw new NotFoundException();
         }
-        return customer.Workspace.ToDto();
+        return customer.Address.ToDto();
     }
 
     /// <summary>
@@ -137,14 +155,13 @@ public abstract class CustomersServiceBase : ICustomersService
         var customer = await _context
             .Customers.Include(t => t.Orders)
             .FirstOrDefaultAsync(x => x.Id == idDto.Id);
-
         if (customer == null)
         {
             throw new NotFoundException();
         }
 
         var orders = await _context
-            .Orders.Where(a => orderIdDtos.Select(x => x.Id).Contains(a.Id))
+            .Orders.Where(a => ordersId.Select(x => x.Id).Contains(a.Id))
             .ToListAsync();
 
         if (orders.Count == 0)
@@ -159,7 +176,7 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Delete one Customer
     /// </summary>
-    public async Task DeleteCustomer(CustomerIdDto inputDto)
+    public async Task DeleteCustomer(CustomerIdDto idDto)
     {
         var customer = await _context.Customers.FindAsync(idDto.Id);
         if (customer == null)
@@ -178,13 +195,12 @@ public abstract class CustomersServiceBase : ICustomersService
     {
         var customers = await _context
             .Customers.Include(x => x.Orders)
-            .Include(x => x.Addresses)
+            .Include(x => x.Address)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
             .ApplyOrderBy(findManyArgs.SortBy)
             .ToListAsync();
-
         return customers.ConvertAll(customer => customer.ToDto());
     }
 
@@ -208,23 +224,14 @@ public abstract class CustomersServiceBase : ICustomersService
     /// <summary>
     /// Update one Customer
     /// </summary>
-    public async Task UpdateCustomer(CustomerUpdateInput updateDto)
+    public async Task UpdateCustomer(CustomerIdDto idDto, CustomerUpdateInput updateDto)
     {
         var customer = updateDto.ToModel(idDto);
 
-        if (updateDto.OrderIds != null)
+        if (updateDto.Orders != null)
         {
             customer.Orders = await _context
-                .Orders.Where(order => updateDto.OrderIds.Select(t => t.Id).Contains(order.Id))
-                .ToListAsync();
-        }
-
-        if (updateDto.AddressIds != null)
-        {
-            customer.Addresses = await _context
-                .Addresses.Where(address =>
-                    updateDto.AddressIds.Select(t => t.Id).Contains(address.Id)
-                )
+                .Orders.Where(order => updateDto.Orders.Select(t => t.Id).Contains(order.Id))
                 .ToListAsync();
         }
 
@@ -236,7 +243,7 @@ public abstract class CustomersServiceBase : ICustomersService
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!CustomerExists(idDto))
+            if (!_context.Customers.Any(e => e.Id == customer.Id))
             {
                 throw new NotFoundException();
             }
