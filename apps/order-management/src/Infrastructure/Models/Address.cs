@@ -28,7 +28,7 @@ public class Address
     [StringLength(1000)]
     public string? State { get; set; }
 
-    [Range(optional.MaxValue)]
+    [Range(-999999999, 999999999)]
     public int? Zip { get; set; }
 
     public List<Customer>? Customers { get; set; } = new List<Customer>();

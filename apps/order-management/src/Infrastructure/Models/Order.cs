@@ -16,13 +16,13 @@ public class Order
     [Required()]
     public string UpdatedAt { get; set; }
 
-    [Range(optional.MaxValue)]
+    [Range(-999999999, 999999999)]
     public int? Quantity { get; set; }
 
-    [Range(optional.MaxValue)]
+    [Range(-999999999, 999999999)]
     public double? Discount { get; set; }
 
-    [Range(optional.MaxValue)]
+    [Range(-999999999, 999999999)]
     public int? TotalPrice { get; set; }
 
     public string CustomerId { get; set; }

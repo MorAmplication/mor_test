@@ -19,7 +19,7 @@ public class Product
     [StringLength(1000)]
     public string? Name { get; set; }
 
-    [Range(optional.MaxValue)]
+    [Range(-999999999, 999999999)]
     public double? ItemPrice { get; set; }
 
     [StringLength(1000)]
