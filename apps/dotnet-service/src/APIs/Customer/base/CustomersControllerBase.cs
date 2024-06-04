@@ -89,16 +89,6 @@ public abstract class CustomersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Get a Address record for Customer
-    /// </summary>
-    [HttpGet("{Id}/addresses")]
-    public async Task<ActionResult<List<AddressDto>>> GetAddress([FromRoute()] CustomerIdDto idDto)
-    {
-        var address = await _service.GetAddress(idDto);
-        return Ok(address);
-    }
-
-    /// <summary>
     /// Update multiple Orders records for Customer
     /// </summary>
     [HttpPatch("{Id}/orders")]

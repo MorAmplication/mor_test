@@ -12,25 +12,13 @@ public static class CustomersExtensions
             Id = model.Id,
             CreatedAt = model.CreatedAt,
             UpdatedAt = model.UpdatedAt,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-            Email = model.Email,
-            Phone = model.Phone,
             Orders = model.Orders.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
-            Address = new AddressIdDto { Id = model.AddressId },
         };
     }
 
     public static Customer ToModel(this CustomerUpdateInput updateDto, CustomerIdDto idDto)
     {
-        var customer = new Customer
-        {
-            Id = idDto.Id,
-            FirstName = updateDto.FirstName,
-            LastName = updateDto.LastName,
-            Email = updateDto.Email,
-            Phone = updateDto.Phone
-        };
+        var customer = new Customer { Id = idDto.Id };
 
         // map required fields
         if (updateDto.CreatedAt != null)

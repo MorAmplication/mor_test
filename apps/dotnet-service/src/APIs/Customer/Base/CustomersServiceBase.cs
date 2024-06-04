@@ -26,11 +26,7 @@ public abstract class CustomersServiceBase : ICustomersService
         var customer = new Customer
         {
             CreatedAt = createDto.CreatedAt,
-            UpdatedAt = createDto.UpdatedAt,
-            FirstName = createDto.FirstName,
-            LastName = createDto.LastName,
-            Email = createDto.Email,
-            Phone = createDto.Phone
+            UpdatedAt = createDto.UpdatedAt
         };
 
         if (createDto.Id != null)
@@ -132,22 +128,6 @@ public abstract class CustomersServiceBase : ICustomersService
     }
 
     /// <summary>
-    /// Get a Address record for Customer
-    /// </summary>
-    public async Task<AddressDto> GetAddress(CustomerIdDto idDto)
-    {
-        var customer = await _context
-            .Customers.Where(customer => customer.Id == idDto.Id)
-            .Include(customer => customer.Address)
-            .FirstOrDefaultAsync();
-        if (customer == null)
-        {
-            throw new NotFoundException();
-        }
-        return customer.Address.ToDto();
-    }
-
-    /// <summary>
     /// Update multiple Orders records for Customer
     /// </summary>
     public async Task UpdateOrders(CustomerIdDto idDto, OrderIdDto[] ordersId)
@@ -195,7 +175,6 @@ public abstract class CustomersServiceBase : ICustomersService
     {
         var customers = await _context
             .Customers.Include(x => x.Orders)
-            .Include(x => x.Address)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
