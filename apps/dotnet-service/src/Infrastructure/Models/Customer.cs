@@ -16,21 +16,5 @@ public class Customer
     [Required()]
     public DateTime UpdatedAt { get; set; }
 
-    [StringLength(1000)]
-    public string? FirstName { get; set; }
-
-    [StringLength(1000)]
-    public string? LastName { get; set; }
-
-    public string? Email { get; set; }
-
-    [StringLength(1000)]
-    public string? Phone { get; set; }
-
     public List<Order>? Orders { get; set; } = new List<Order>();
-
-    public string AddressId { get; set; }
-
-    [ForeignKey(nameof(AddressId))]
-    public Address? Address { get; set; } = null;
 }

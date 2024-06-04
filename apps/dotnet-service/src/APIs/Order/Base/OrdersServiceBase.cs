@@ -19,18 +19,11 @@ public abstract class OrdersServiceBase : IOrdersService
     }
 
     /// <summary>
-    /// Create one Orders
+    /// Create one Order
     /// </summary>
     public async Task<OrderDto> CreateOrder(OrderCreateInput createDto)
     {
-        var order = new Order
-        {
-            CreatedAt = createDto.CreatedAt,
-            UpdatedAt = createDto.UpdatedAt,
-            Quantity = createDto.Quantity,
-            Discount = createDto.Discount,
-            TotalPrice = createDto.TotalPrice
-        };
+        var order = new Order { CreatedAt = createDto.CreatedAt, UpdatedAt = createDto.UpdatedAt };
 
         if (createDto.Id != null)
         {
@@ -51,7 +44,7 @@ public abstract class OrdersServiceBase : IOrdersService
     }
 
     /// <summary>
-    /// Delete one Orders
+    /// Delete one Order
     /// </summary>
     public async Task DeleteOrder(OrderIdDto idDto)
     {
@@ -72,7 +65,6 @@ public abstract class OrdersServiceBase : IOrdersService
     {
         var orders = await _context
             .Orders.Include(x => x.Customer)
-            .Include(x => x.Product)
             .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
@@ -82,7 +74,7 @@ public abstract class OrdersServiceBase : IOrdersService
     }
 
     /// <summary>
-    /// Get one Orders
+    /// Get one Order
     /// </summary>
     public async Task<OrderDto> Order(OrderIdDto idDto)
     {
@@ -99,7 +91,7 @@ public abstract class OrdersServiceBase : IOrdersService
     }
 
     /// <summary>
-    /// Get a Customer record for Orders
+    /// Get a Customer record for Order
     /// </summary>
     public async Task<CustomerDto> GetCustomer(OrderIdDto idDto)
     {
@@ -115,23 +107,7 @@ public abstract class OrdersServiceBase : IOrdersService
     }
 
     /// <summary>
-    /// Get a Product record for Orders
-    /// </summary>
-    public async Task<ProductDto> GetProduct(OrderIdDto idDto)
-    {
-        var order = await _context
-            .Orders.Where(order => order.Id == idDto.Id)
-            .Include(order => order.Product)
-            .FirstOrDefaultAsync();
-        if (order == null)
-        {
-            throw new NotFoundException();
-        }
-        return order.Product.ToDto();
-    }
-
-    /// <summary>
-    /// Update one Orders
+    /// Update one Order
     /// </summary>
     public async Task UpdateOrder(OrderIdDto idDto, OrderUpdateInput updateDto)
     {

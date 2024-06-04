@@ -17,7 +17,7 @@ public abstract class OrdersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Create one Orders
+    /// Create one Order
     /// </summary>
     [HttpPost()]
     public async Task<ActionResult<OrderDto>> CreateOrder(OrderCreateInput input)
@@ -28,7 +28,7 @@ public abstract class OrdersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Delete one Orders
+    /// Delete one Order
     /// </summary>
     [HttpDelete("{Id}")]
     public async Task<ActionResult> DeleteOrder([FromRoute()] OrderIdDto idDto)
@@ -55,7 +55,7 @@ public abstract class OrdersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Get one Orders
+    /// Get one Order
     /// </summary>
     [HttpGet("{Id}")]
     public async Task<ActionResult<OrderDto>> Order([FromRoute()] OrderIdDto idDto)
@@ -71,7 +71,7 @@ public abstract class OrdersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Get a Customer record for Orders
+    /// Get a Customer record for Order
     /// </summary>
     [HttpGet("{Id}/customers")]
     public async Task<ActionResult<List<CustomerDto>>> GetCustomer([FromRoute()] OrderIdDto idDto)
@@ -81,17 +81,7 @@ public abstract class OrdersControllerBase : ControllerBase
     }
 
     /// <summary>
-    /// Get a Product record for Orders
-    /// </summary>
-    [HttpGet("{Id}/products")]
-    public async Task<ActionResult<List<ProductDto>>> GetProduct([FromRoute()] OrderIdDto idDto)
-    {
-        var product = await _service.GetProduct(idDto);
-        return Ok(product);
-    }
-
-    /// <summary>
-    /// Update one Orders
+    /// Update one Order
     /// </summary>
     [HttpPatch("{Id}")]
     public async Task<ActionResult> UpdateOrder(

@@ -25,11 +25,6 @@ public interface ICustomersService
     public Task<List<OrderDto>> FindOrders(CustomerIdDto idDto, OrderFindMany OrderFindMany);
 
     /// <summary>
-    /// Get a Address record for Customer
-    /// </summary>
-    public Task<AddressDto> GetAddress(CustomerIdDto idDto);
-
-    /// <summary>
     /// Update multiple Orders records for Customer
     /// </summary>
     public Task UpdateOrders(CustomerIdDto idDto, OrderIdDto[] ordersId);
