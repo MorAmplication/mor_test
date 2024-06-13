@@ -14,7 +14,7 @@ public class Address
     public DateTime CreatedAt { get; set; }
 
     [Required()]
-    public string UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     [StringLength(1000)]
     public string? Address_1 { get; set; }

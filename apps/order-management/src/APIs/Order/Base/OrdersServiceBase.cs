@@ -36,6 +36,19 @@ public abstract class OrdersServiceBase : IOrdersService
         {
             order.Id = createDto.Id;
         }
+        if (createDto.Customer != null)
+        {
+            order.Customer = await _context
+                .Customers.Where(customer => createDto.Customer.Id == customer.Id)
+                .FirstOrDefaultAsync();
+        }
+
+        if (createDto.Product != null)
+        {
+            order.Product = await _context
+                .Products.Where(product => createDto.Product.Id == product.Id)
+                .FirstOrDefaultAsync();
+        }
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();

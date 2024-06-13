@@ -17,7 +17,7 @@ public static class AddressesExtensions
             City = model.City,
             State = model.State,
             Zip = model.Zip,
-            Customers = model.Customers.Select(x => new CustomerIdDto { Id = x.Id }).ToList(),
+            Customers = model.Customers?.Select(x => new CustomerIdDto { Id = x.Id }).ToList(),
         };
     }
 
@@ -40,7 +40,7 @@ public static class AddressesExtensions
         }
         if (updateDto.UpdatedAt != null)
         {
-            address.UpdatedAt = updateDto.UpdatedAt;
+            address.UpdatedAt = updateDto.UpdatedAt.Value;
         }
 
         return address;

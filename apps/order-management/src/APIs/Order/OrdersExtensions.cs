@@ -37,7 +37,7 @@ public static class OrdersExtensions
         }
         if (updateDto.UpdatedAt != null)
         {
-            order.UpdatedAt = updateDto.UpdatedAt;
+            order.UpdatedAt = updateDto.UpdatedAt.Value;
         }
 
         return order;

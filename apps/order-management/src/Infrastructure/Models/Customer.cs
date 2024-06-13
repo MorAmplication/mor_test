@@ -14,7 +14,7 @@ public class Customer
     public DateTime CreatedAt { get; set; }
 
     [Required()]
-    public string UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     [StringLength(1000)]
     public string? FirstName { get; set; }
@@ -29,7 +29,7 @@ public class Customer
 
     public List<Order>? Orders { get; set; } = new List<Order>();
 
-    public string AddressId { get; set; }
+    public string? AddressId { get; set; }
 
     [ForeignKey(nameof(AddressId))]
     public Address? Address { get; set; } = null;

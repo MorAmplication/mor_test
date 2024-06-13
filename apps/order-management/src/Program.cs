@@ -23,11 +23,7 @@ builder.Services.AddCors(builder =>
         "MyCorsPolicy",
         policy =>
         {
-            policy
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .WithOrigins(["localhost", "https://studio.apollographql.com"])
-                .AllowCredentials();
+            policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(["localhost"]).AllowCredentials();
         }
     );
 });

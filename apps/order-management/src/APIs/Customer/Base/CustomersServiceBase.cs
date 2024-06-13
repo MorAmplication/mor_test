@@ -44,6 +44,13 @@ public abstract class CustomersServiceBase : ICustomersService
                 .ToListAsync();
         }
 
+        if (createDto.Address != null)
+        {
+            customer.Address = await _context
+                .Addresses.Where(address => createDto.Address.Id == address.Id)
+                .FirstOrDefaultAsync();
+        }
+
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
 

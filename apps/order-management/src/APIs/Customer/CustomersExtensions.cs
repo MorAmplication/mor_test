@@ -16,7 +16,7 @@ public static class CustomersExtensions
             LastName = model.LastName,
             Email = model.Email,
             Phone = model.Phone,
-            Orders = model.Orders.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
+            Orders = model.Orders?.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
             Address = new AddressIdDto { Id = model.AddressId },
         };
     }
@@ -39,7 +39,7 @@ public static class CustomersExtensions
         }
         if (updateDto.UpdatedAt != null)
         {
-            customer.UpdatedAt = updateDto.UpdatedAt;
+            customer.UpdatedAt = updateDto.UpdatedAt.Value;
         }
 
         return customer;

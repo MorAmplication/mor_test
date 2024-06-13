@@ -6,7 +6,7 @@ public class CustomerUpdateInput
 
     public DateTime? CreatedAt { get; set; }
 
-    public string? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
     public string? FirstName { get; set; }
 

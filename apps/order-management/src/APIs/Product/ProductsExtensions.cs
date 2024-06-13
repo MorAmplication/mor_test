@@ -15,7 +15,7 @@ public static class ProductsExtensions
             Name = model.Name,
             ItemPrice = model.ItemPrice,
             Description = model.Description,
-            Orders = model.Orders.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
+            Orders = model.Orders?.Select(x => new OrderIdDto { Id = x.Id }).ToList(),
         };
     }
 
@@ -36,7 +36,7 @@ public static class ProductsExtensions
         }
         if (updateDto.UpdatedAt != null)
         {
-            product.UpdatedAt = updateDto.UpdatedAt;
+            product.UpdatedAt = updateDto.UpdatedAt.Value;
         }
 
         return product;

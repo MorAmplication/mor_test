@@ -6,7 +6,7 @@ public class AddressCreateInput
 
     public DateTime CreatedAt { get; set; }
 
-    public string UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public string? Address_1 { get; set; }
 

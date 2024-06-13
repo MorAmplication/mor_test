@@ -6,7 +6,7 @@ public class OrderCreateInput
 
     public DateTime CreatedAt { get; set; }
 
-    public string UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public int? Quantity { get; set; }
 

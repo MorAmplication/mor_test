@@ -14,7 +14,7 @@ public class Order
     public DateTime CreatedAt { get; set; }
 
     [Required()]
-    public string UpdatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     [Range(-999999999, 999999999)]
     public int? Quantity { get; set; }
@@ -25,12 +25,12 @@ public class Order
     [Range(-999999999, 999999999)]
     public int? TotalPrice { get; set; }
 
-    public string CustomerId { get; set; }
+    public string? CustomerId { get; set; }
 
     [ForeignKey(nameof(CustomerId))]
     public Customer? Customer { get; set; } = null;
 
-    public string ProductId { get; set; }
+    public string? ProductId { get; set; }
 
     [ForeignKey(nameof(ProductId))]
     public Product? Product { get; set; } = null;
