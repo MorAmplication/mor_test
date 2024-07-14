@@ -1,4 +1,5 @@
 using Kkk.APIs;
+using Kkk.APIs.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kkk.APIs;
@@ -12,5 +13,11 @@ public abstract class MorsControllerBase : ControllerBase
     public MorsControllerBase(IMorsService service)
     {
         _service = service;
+    }
+
+    [HttpGet("{Id}/mor-test")]
+    public async Task<string> MorTest([FromBody()] Nn nnDto)
+    {
+        return await _service.MorTest(nnDto);
     }
 }
