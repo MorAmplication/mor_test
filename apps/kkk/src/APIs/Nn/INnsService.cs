@@ -24,6 +24,7 @@ public interface INnsService
     /// Get one nn
     /// </summary>
     public Task<Nn> Nn(NnWhereUniqueInput uniqueId);
+    public Task<string> MorAction(NnWhereInput nnWhereInputDto);
 
     /// <summary>
     /// Meta data about nn records

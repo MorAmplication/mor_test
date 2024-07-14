@@ -94,6 +94,11 @@ public abstract class NnsServiceBase : INnsService
         return nn;
     }
 
+    public async Task<string> MorAction(NnWhereInput nnWhereInputDto)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     /// Meta data about nn records
     /// </summary>

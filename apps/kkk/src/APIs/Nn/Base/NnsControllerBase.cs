@@ -22,7 +22,7 @@ public abstract class NnsControllerBase : ControllerBase
     /// Create one nn
     /// </summary>
     [HttpPost()]
-    [Authorize(Roles = "user")]
+    [Authorize(Roles = "mor,user")]
     public async Task<ActionResult<Nn>> CreateNn(NnCreateInput input)
     {
         var nn = await _service.CreateNn(input);
@@ -34,7 +34,7 @@ public abstract class NnsControllerBase : ControllerBase
     /// Delete one nn
     /// </summary>
     [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
+    [Authorize(Roles = "mor,user")]
     public async Task<ActionResult> DeleteNn([FromRoute()] NnWhereUniqueInput uniqueId)
     {
         try
@@ -53,7 +53,7 @@ public abstract class NnsControllerBase : ControllerBase
     /// Find many nns
     /// </summary>
     [HttpGet()]
-    [Authorize(Roles = "user")]
+    [Authorize(Roles = "mor,user")]
     public async Task<ActionResult<List<Nn>>> Nns([FromQuery()] NnFindManyArgs filter)
     {
         return Ok(await _service.Nns(filter));
@@ -63,7 +63,7 @@ public abstract class NnsControllerBase : ControllerBase
     /// Get one nn
     /// </summary>
     [HttpGet("{Id}")]
-    [Authorize(Roles = "user")]
+    [Authorize(Roles = "mor,user")]
     public async Task<ActionResult<Nn>> Nn([FromRoute()] NnWhereUniqueInput uniqueId)
     {
         try
@@ -74,6 +74,13 @@ public abstract class NnsControllerBase : ControllerBase
         {
             return NotFound();
         }
+    }
+
+    [HttpGet("{Id}/mor-action")]
+    [Authorize(Roles = "mor,user")]
+    public async Task<string> MorAction([FromBody()] NnWhereInput nnWhereInputDto)
+    {
+        return await _service.MorAction(nnWhereInputDto);
     }
 
     /// <summary>
@@ -89,7 +96,7 @@ public abstract class NnsControllerBase : ControllerBase
     /// Update one nn
     /// </summary>
     [HttpPatch("{Id}")]
-    [Authorize(Roles = "user")]
+    [Authorize(Roles = "mor,user")]
     public async Task<ActionResult> UpdateNn(
         [FromRoute()] NnWhereUniqueInput uniqueId,
         [FromQuery()] NnUpdateInput nnUpdateDto
