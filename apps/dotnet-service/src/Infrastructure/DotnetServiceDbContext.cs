@@ -1,14 +1,11 @@
-using DotnetService.Infrastructure.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotnetService.Infrastructure;
 
-public class DotnetServiceDbContext : DbContext
+public class DotnetServiceDbContext : IdentityDbContext<IdentityUser>
 {
     public DotnetServiceDbContext(DbContextOptions<DotnetServiceDbContext> options)
         : base(options) { }
-
-    public DbSet<Customer> Customers { get; set; }
-
-    public DbSet<Order> Orders { get; set; }
 }
