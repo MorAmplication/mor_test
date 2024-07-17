@@ -77,6 +77,16 @@ public abstract class MorsControllerBase : ControllerBase
     }
 
     /// <summary>
+    /// Get a Vika record for Mor
+    /// </summary>
+    [HttpGet("{Id}/vikas")]
+    public async Task<ActionResult<List<Vika>>> GetVika([FromRoute()] MorWhereUniqueInput uniqueId)
+    {
+        var vika = await _service.GetVika(uniqueId);
+        return Ok(vika);
+    }
+
+    /// <summary>
     /// Meta data about Mor records
     /// </summary>
     [HttpPost("meta")]

@@ -31,7 +31,27 @@ public interface IVikasService
     public Task UpdateVika(VikaWhereUniqueInput uniqueId, VikaUpdateInput updateDto);
 
     /// <summary>
+    /// Connect multiple Mors records to Vika
+    /// </summary>
+    public Task ConnectMors(VikaWhereUniqueInput uniqueId, MorWhereUniqueInput[] morsId);
+
+    /// <summary>
+    /// Disconnect multiple Mors records from Vika
+    /// </summary>
+    public Task DisconnectMors(VikaWhereUniqueInput uniqueId, MorWhereUniqueInput[] morsId);
+
+    /// <summary>
+    /// Find multiple Mors records for Vika
+    /// </summary>
+    public Task<List<Mor>> FindMors(VikaWhereUniqueInput uniqueId, MorFindManyArgs MorFindManyArgs);
+
+    /// <summary>
     /// Meta data about Vika records
     /// </summary>
     public Task<MetadataDto> VikasMeta(VikaFindManyArgs findManyArgs);
+
+    /// <summary>
+    /// Update multiple Mors records for Vika
+    /// </summary>
+    public Task UpdateMors(VikaWhereUniqueInput uniqueId, MorWhereUniqueInput[] morsId);
 }

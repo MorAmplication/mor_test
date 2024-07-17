@@ -12,6 +12,7 @@ public static class VikasExtensions
             Id = model.Id,
             CreatedAt = model.CreatedAt,
             UpdatedAt = model.UpdatedAt,
+            Mors = model.Mors?.Select(x => x.Id).ToList(),
         };
     }
 

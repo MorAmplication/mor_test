@@ -7,4 +7,6 @@ public class MorCreateInput
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
+
+    public Vika Vika { get; set; }
 }

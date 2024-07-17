@@ -33,6 +33,12 @@ public abstract class VikasServiceBase : IVikasService
         {
             vika.Id = createDto.Id;
         }
+        if (createDto.Mors != null)
+        {
+            vika.Mors = await _context
+                .Mors.Where(mor => createDto.Mors.Select(t => t.Id).Contains(mor.Id))
+                .ToListAsync();
+        }
 
         _context.Vikas.Add(vika);
         await _context.SaveChangesAsync();
@@ -68,7 +74,8 @@ public abstract class VikasServiceBase : IVikasService
     public async Task<List<Vika>> Vikas(VikaFindManyArgs findManyArgs)
     {
         var vikas = await _context
-            .Vikas.ApplyWhere(findManyArgs.Where)
+            .Vikas.Include(x => x.Mors)
+            .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
             .ApplyOrderBy(findManyArgs.SortBy)
@@ -100,6 +107,13 @@ public abstract class VikasServiceBase : IVikasService
     {
         var vika = updateDto.ToModel(uniqueId);
 
+        if (updateDto.Mors != null)
+        {
+            vika.Mors = await _context
+                .Mors.Where(mor => updateDto.Mors.Select(t => t).Contains(mor.Id))
+                .ToListAsync();
+        }
+
         _context.Entry(vika).State = EntityState.Modified;
 
         try
@@ -120,6 +134,80 @@ public abstract class VikasServiceBase : IVikasService
     }
 
     /// <summary>
+    /// Connect multiple Mors records to Vika
+    /// </summary>
+    public async Task ConnectMors(VikaWhereUniqueInput uniqueId, MorWhereUniqueInput[] morsId)
+    {
+        var vika = await _context
+            .Vikas.Include(x => x.Mors)
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
+        if (vika == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var mors = await _context
+            .Mors.Where(t => morsId.Select(x => x.Id).Contains(t.Id))
+            .ToListAsync();
+        if (mors.Count == 0)
+        {
+            throw new NotFoundException();
+        }
+
+        var morsToConnect = mors.Except(vika.Mors);
+
+        foreach (var mor in morsToConnect)
+        {
+            vika.Mors.Add(mor);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Disconnect multiple Mors records from Vika
+    /// </summary>
+    public async Task DisconnectMors(VikaWhereUniqueInput uniqueId, MorWhereUniqueInput[] morsId)
+    {
+        var vika = await _context
+            .Vikas.Include(x => x.Mors)
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
+        if (vika == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var mors = await _context
+            .Mors.Where(t => morsId.Select(x => x.Id).Contains(t.Id))
+            .ToListAsync();
+
+        foreach (var mor in mors)
+        {
+            vika.Mors?.Remove(mor);
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Find multiple Mors records for Vika
+    /// </summary>
+    public async Task<List<Mor>> FindMors(
+        VikaWhereUniqueInput uniqueId,
+        MorFindManyArgs vikaFindManyArgs
+    )
+    {
+        var mors = await _context
+            .Mors.Where(m => m.VikaId == uniqueId.Id)
+            .ApplyWhere(vikaFindManyArgs.Where)
+            .ApplySkip(vikaFindManyArgs.Skip)
+            .ApplyTake(vikaFindManyArgs.Take)
+            .ApplyOrderBy(vikaFindManyArgs.SortBy)
+            .ToListAsync();
+
+        return mors.Select(x => x.ToDto()).ToList();
+    }
+
+    /// <summary>
     /// Meta data about Vika records
     /// </summary>
     public async Task<MetadataDto> VikasMeta(VikaFindManyArgs findManyArgs)
@@ -127,5 +215,31 @@ public abstract class VikasServiceBase : IVikasService
         var count = await _context.Vikas.ApplyWhere(findManyArgs.Where).CountAsync();
 
         return new MetadataDto { Count = count };
+    }
+
+    /// <summary>
+    /// Update multiple Mors records for Vika
+    /// </summary>
+    public async Task UpdateMors(VikaWhereUniqueInput uniqueId, MorWhereUniqueInput[] morsId)
+    {
+        var vika = await _context
+            .Vikas.Include(t => t.Mors)
+            .FirstOrDefaultAsync(x => x.Id == uniqueId.Id);
+        if (vika == null)
+        {
+            throw new NotFoundException();
+        }
+
+        var mors = await _context
+            .Mors.Where(a => morsId.Select(x => x.Id).Contains(a.Id))
+            .ToListAsync();
+
+        if (mors.Count == 0)
+        {
+            throw new NotFoundException();
+        }
+
+        vika.Mors = mors;
+        await _context.SaveChangesAsync();
     }
 }

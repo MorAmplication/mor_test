@@ -33,6 +33,12 @@ public abstract class MorsServiceBase : IMorsService
         {
             mor.Id = createDto.Id;
         }
+        if (createDto.Vika != null)
+        {
+            mor.Vika = await _context
+                .Vikas.Where(vika => createDto.Vika.Id == vika.Id)
+                .FirstOrDefaultAsync();
+        }
 
         _context.Mors.Add(mor);
         await _context.SaveChangesAsync();
@@ -68,7 +74,8 @@ public abstract class MorsServiceBase : IMorsService
     public async Task<List<Mor>> Mors(MorFindManyArgs findManyArgs)
     {
         var mors = await _context
-            .Mors.ApplyWhere(findManyArgs.Where)
+            .Mors.Include(x => x.Vika)
+            .ApplyWhere(findManyArgs.Where)
             .ApplySkip(findManyArgs.Skip)
             .ApplyTake(findManyArgs.Take)
             .ApplyOrderBy(findManyArgs.SortBy)
@@ -91,6 +98,22 @@ public abstract class MorsServiceBase : IMorsService
         }
 
         return mor;
+    }
+
+    /// <summary>
+    /// Get a Vika record for Mor
+    /// </summary>
+    public async Task<Vika> GetVika(MorWhereUniqueInput uniqueId)
+    {
+        var mor = await _context
+            .Mors.Where(mor => mor.Id == uniqueId.Id)
+            .Include(mor => mor.Vika)
+            .FirstOrDefaultAsync();
+        if (mor == null)
+        {
+            throw new NotFoundException();
+        }
+        return mor.Vika.ToDto();
     }
 
     /// <summary>

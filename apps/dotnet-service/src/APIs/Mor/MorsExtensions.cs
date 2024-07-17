@@ -12,6 +12,7 @@ public static class MorsExtensions
             Id = model.Id,
             CreatedAt = model.CreatedAt,
             UpdatedAt = model.UpdatedAt,
+            Vika = model.VikaId,
         };
     }
 
@@ -27,6 +28,10 @@ public static class MorsExtensions
         if (updateDto.UpdatedAt != null)
         {
             mor.UpdatedAt = updateDto.UpdatedAt.Value;
+        }
+        if (updateDto.Vika != null)
+        {
+            mor.Vika = updateDto.Vika;
         }
 
         return mor;

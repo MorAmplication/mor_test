@@ -26,6 +26,11 @@ public interface IMorsService
     public Task<Mor> Mor(MorWhereUniqueInput uniqueId);
 
     /// <summary>
+    /// Get a Vika record for Mor
+    /// </summary>
+    public Task<Vika> GetVika(MorWhereUniqueInput uniqueId);
+
+    /// <summary>
     /// Meta data about Mor records
     /// </summary>
     public Task<MetadataDto> MorsMeta(MorFindManyArgs findManyArgs);

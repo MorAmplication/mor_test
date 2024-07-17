@@ -99,11 +99,97 @@ public abstract class VikasControllerBase : ControllerBase
     }
 
     /// <summary>
+    /// Connect multiple Mors records to Vika
+    /// </summary>
+    [HttpPost("{Id}/mors")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> ConnectMors(
+        [FromRoute()] VikaWhereUniqueInput uniqueId,
+        [FromQuery()] MorWhereUniqueInput[] morsId
+    )
+    {
+        try
+        {
+            await _service.ConnectMors(uniqueId, morsId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Disconnect multiple Mors records from Vika
+    /// </summary>
+    [HttpDelete("{Id}/mors")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> DisconnectMors(
+        [FromRoute()] VikaWhereUniqueInput uniqueId,
+        [FromBody()] MorWhereUniqueInput[] morsId
+    )
+    {
+        try
+        {
+            await _service.DisconnectMors(uniqueId, morsId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Find multiple Mors records for Vika
+    /// </summary>
+    [HttpGet("{Id}/mors")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult<List<Mor>>> FindMors(
+        [FromRoute()] VikaWhereUniqueInput uniqueId,
+        [FromQuery()] MorFindManyArgs filter
+    )
+    {
+        try
+        {
+            return Ok(await _service.FindMors(uniqueId, filter));
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+    }
+
+    /// <summary>
     /// Meta data about Vika records
     /// </summary>
     [HttpPost("meta")]
     public async Task<ActionResult<MetadataDto>> VikasMeta([FromQuery()] VikaFindManyArgs filter)
     {
         return Ok(await _service.VikasMeta(filter));
+    }
+
+    /// <summary>
+    /// Update multiple Mors records for Vika
+    /// </summary>
+    [HttpPatch("{Id}/mors")]
+    [Authorize(Roles = "user")]
+    public async Task<ActionResult> UpdateMors(
+        [FromRoute()] VikaWhereUniqueInput uniqueId,
+        [FromBody()] MorWhereUniqueInput[] morsId
+    )
+    {
+        try
+        {
+            await _service.UpdateMors(uniqueId, morsId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
     }
 }

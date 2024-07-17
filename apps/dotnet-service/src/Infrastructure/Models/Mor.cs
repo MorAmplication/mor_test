@@ -15,4 +15,9 @@ public class MorDbModel
 
     [Required()]
     public DateTime UpdatedAt { get; set; }
+
+    public string VikaId { get; set; }
+
+    [ForeignKey(nameof(VikaId))]
+    public VikaDbModel Vika { get; set; } = null;
 }

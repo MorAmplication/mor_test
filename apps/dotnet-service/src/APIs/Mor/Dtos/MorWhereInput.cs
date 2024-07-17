@@ -7,4 +7,6 @@ public class MorWhereInput
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public string? Vika { get; set; }
 }

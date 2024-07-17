@@ -15,4 +15,6 @@ public class VikaDbModel
 
     [Required()]
     public DateTime UpdatedAt { get; set; }
+
+    public List<MorDbModel>? Mors { get; set; } = new List<MorDbModel>();
 }
