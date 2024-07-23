@@ -2,7 +2,6 @@ using DotnetService.APIs;
 using DotnetService.APIs.Common;
 using DotnetService.APIs.Dtos;
 using DotnetService.APIs.Errors;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetService.APIs;
@@ -22,7 +21,6 @@ public abstract class MorsControllerBase : ControllerBase
     /// Create one Mor
     /// </summary>
     [HttpPost()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<Mor>> CreateMor(MorCreateInput input)
     {
         var mor = await _service.CreateMor(input);
@@ -34,7 +32,6 @@ public abstract class MorsControllerBase : ControllerBase
     /// Delete one Mor
     /// </summary>
     [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> DeleteMor([FromRoute()] MorWhereUniqueInput uniqueId)
     {
         try
@@ -53,7 +50,6 @@ public abstract class MorsControllerBase : ControllerBase
     /// Find many Mors
     /// </summary>
     [HttpGet()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<List<Mor>>> Mors([FromQuery()] MorFindManyArgs filter)
     {
         return Ok(await _service.Mors(filter));
@@ -63,7 +59,6 @@ public abstract class MorsControllerBase : ControllerBase
     /// Get one Mor
     /// </summary>
     [HttpGet("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<Mor>> Mor([FromRoute()] MorWhereUniqueInput uniqueId)
     {
         try
@@ -99,7 +94,6 @@ public abstract class MorsControllerBase : ControllerBase
     /// Update one Mor
     /// </summary>
     [HttpPatch("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateMor(
         [FromRoute()] MorWhereUniqueInput uniqueId,
         [FromQuery()] MorUpdateInput morUpdateDto

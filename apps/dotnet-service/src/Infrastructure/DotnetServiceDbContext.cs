@@ -1,11 +1,9 @@
 using DotnetService.Infrastructure.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotnetService.Infrastructure;
 
-public class DotnetServiceDbContext : IdentityDbContext<IdentityUser>
+public class DotnetServiceDbContext : DbContext
 {
     public DotnetServiceDbContext(DbContextOptions<DotnetServiceDbContext> options)
         : base(options) { }

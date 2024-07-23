@@ -2,7 +2,6 @@ using DotnetService.APIs;
 using DotnetService.APIs.Common;
 using DotnetService.APIs.Dtos;
 using DotnetService.APIs.Errors;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotnetService.APIs;
@@ -22,7 +21,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Create one Vika
     /// </summary>
     [HttpPost()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<Vika>> CreateVika(VikaCreateInput input)
     {
         var vika = await _service.CreateVika(input);
@@ -34,7 +32,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Delete one Vika
     /// </summary>
     [HttpDelete("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> DeleteVika([FromRoute()] VikaWhereUniqueInput uniqueId)
     {
         try
@@ -53,7 +50,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Find many Vikas
     /// </summary>
     [HttpGet()]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<List<Vika>>> Vikas([FromQuery()] VikaFindManyArgs filter)
     {
         return Ok(await _service.Vikas(filter));
@@ -63,7 +59,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Get one Vika
     /// </summary>
     [HttpGet("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<Vika>> Vika([FromRoute()] VikaWhereUniqueInput uniqueId)
     {
         try
@@ -80,7 +75,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Update one Vika
     /// </summary>
     [HttpPatch("{Id}")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateVika(
         [FromRoute()] VikaWhereUniqueInput uniqueId,
         [FromQuery()] VikaUpdateInput vikaUpdateDto
@@ -102,7 +96,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Connect multiple Mors records to Vika
     /// </summary>
     [HttpPost("{Id}/mors")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> ConnectMors(
         [FromRoute()] VikaWhereUniqueInput uniqueId,
         [FromQuery()] MorWhereUniqueInput[] morsId
@@ -124,7 +117,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Disconnect multiple Mors records from Vika
     /// </summary>
     [HttpDelete("{Id}/mors")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> DisconnectMors(
         [FromRoute()] VikaWhereUniqueInput uniqueId,
         [FromBody()] MorWhereUniqueInput[] morsId
@@ -146,7 +138,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Find multiple Mors records for Vika
     /// </summary>
     [HttpGet("{Id}/mors")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult<List<Mor>>> FindMors(
         [FromRoute()] VikaWhereUniqueInput uniqueId,
         [FromQuery()] MorFindManyArgs filter
@@ -175,7 +166,6 @@ public abstract class VikasControllerBase : ControllerBase
     /// Update multiple Mors records for Vika
     /// </summary>
     [HttpPatch("{Id}/mors")]
-    [Authorize(Roles = "user")]
     public async Task<ActionResult> UpdateMors(
         [FromRoute()] VikaWhereUniqueInput uniqueId,
         [FromBody()] MorWhereUniqueInput[] morsId
