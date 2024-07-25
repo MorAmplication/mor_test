@@ -36,14 +36,14 @@ $ dotnet ef migrations add <new migration name>
 
 ## Step 2.2: Scripts - local development
 
-- Run the service's dependencies in Docker `docker-compose up`
+- Run the service's dependencies in Docker `docker-compose up --build`
 - Run the service  `dotnet run --project ./src`
 
 ## Step 2.2: Scripts - container based development
 
-- Run the service and its dependencies in Docker `docker-compose --profile complete up`
+- Run the service and its dependencies in Docker `docker-compose --profile complete up --build`
 
 ## Apply database migration in non-local environment 
 
-Database modification in non-local enviroment would be applied throught different strategies depending on the requirements. 
+Database modification in non-local enviroment would be applied through different strategies depending on the requirements. 
 Follow Microsoft directions for your strategy: https://learn.microsoft.com/en-us/ef/core/managing-schemas/migrations/applying

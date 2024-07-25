@@ -8,7 +8,7 @@ public class DotnetServiceDbContext : DbContext
     public DotnetServiceDbContext(DbContextOptions<DotnetServiceDbContext> options)
         : base(options) { }
 
-    public DbSet<Customer> Customers { get; set; }
+    public DbSet<MorDbModel> Mors { get; set; }
 
-    public DbSet<Order> Orders { get; set; }
+    public DbSet<VikaDbModel> Vikas { get; set; }
 }
