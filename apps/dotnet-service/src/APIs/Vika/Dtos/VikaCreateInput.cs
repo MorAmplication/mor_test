@@ -2,11 +2,11 @@ namespace DotnetService.APIs.Dtos;
 
 public class VikaCreateInput
 {
-    public string? Id { get; set; }
-
     public DateTime CreatedAt { get; set; }
 
-    public DateTime UpdatedAt { get; set; }
+    public string? Id { get; set; }
 
     public List<Mor>? Mors { get; set; }
+
+    public DateTime UpdatedAt { get; set; }
 }

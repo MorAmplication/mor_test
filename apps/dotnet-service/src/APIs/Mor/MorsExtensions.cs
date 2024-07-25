@@ -9,8 +9,8 @@ public static class MorsExtensions
     {
         return new Mor
         {
-            Id = model.Id,
             CreatedAt = model.CreatedAt,
+            Id = model.Id,
             UpdatedAt = model.UpdatedAt,
             Vika = model.VikaId,
         };

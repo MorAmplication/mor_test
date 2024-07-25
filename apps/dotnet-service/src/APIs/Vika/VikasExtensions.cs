@@ -9,10 +9,10 @@ public static class VikasExtensions
     {
         return new Vika
         {
-            Id = model.Id,
             CreatedAt = model.CreatedAt,
-            UpdatedAt = model.UpdatedAt,
+            Id = model.Id,
             Mors = model.Mors?.Select(x => x.Id).ToList(),
+            UpdatedAt = model.UpdatedAt,
         };
     }
 

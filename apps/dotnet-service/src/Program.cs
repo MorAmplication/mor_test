@@ -1,6 +1,5 @@
 using System.Reflection;
 using DotnetService;
-using DotnetService.Brokers.Mymessagebroker;
 using DotnetService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +27,6 @@ builder.Services.AddCors(builder =>
         }
     );
 });
-builder.AddMymessagebroker();
 builder.Services.AddDbContext<DotnetServiceDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
