@@ -6,6 +6,9 @@ namespace DotnetService.Infrastructure.Models;
 [Table("Mors")]
 public class MorDbModel
 {
+    [StringLength(1000)]
+    public string? Atest { get; set; }
+
     [Required()]
     public DateTime CreatedAt { get; set; }
 

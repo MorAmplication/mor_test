@@ -2,6 +2,8 @@ namespace DotnetService.APIs.Dtos;
 
 public class MorWhereInput
 {
+    public string? Atest { get; set; }
+
     public DateTime? CreatedAt { get; set; }
 
     public string? Id { get; set; }

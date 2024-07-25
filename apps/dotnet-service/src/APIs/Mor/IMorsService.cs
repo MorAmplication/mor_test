@@ -9,6 +9,8 @@ public interface IMorsService
     /// Create one Mor
     /// </summary>
     public Task<Mor> CreateMor(MorCreateInput mor);
+    public Task<string> Customtest2(string data);
+    public Task<string> CustonTest(string data);
 
     /// <summary>
     /// Delete one Mor

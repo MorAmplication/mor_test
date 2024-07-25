@@ -25,6 +25,7 @@ public abstract class MorsServiceBase : IMorsService
     {
         var mor = new MorDbModel
         {
+            Atest = createDto.Atest,
             CreatedAt = createDto.CreatedAt,
             UpdatedAt = createDto.UpdatedAt
         };
@@ -51,6 +52,16 @@ public abstract class MorsServiceBase : IMorsService
         }
 
         return result.ToDto();
+    }
+
+    public async Task<string> Customtest2(string data)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<string> CustonTest(string data)
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>

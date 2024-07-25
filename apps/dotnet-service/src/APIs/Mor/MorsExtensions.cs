@@ -9,6 +9,7 @@ public static class MorsExtensions
     {
         return new Mor
         {
+            Atest = model.Atest,
             CreatedAt = model.CreatedAt,
             Id = model.Id,
             UpdatedAt = model.UpdatedAt,
@@ -18,7 +19,7 @@ public static class MorsExtensions
 
     public static MorDbModel ToModel(this MorUpdateInput updateDto, MorWhereUniqueInput uniqueId)
     {
-        var mor = new MorDbModel { Id = uniqueId.Id };
+        var mor = new MorDbModel { Id = uniqueId.Id, Atest = updateDto.Atest };
 
         // map required fields
         if (updateDto.CreatedAt != null)

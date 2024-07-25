@@ -28,6 +28,18 @@ public abstract class MorsControllerBase : ControllerBase
         return CreatedAtAction(nameof(Mor), new { id = mor.Id }, mor);
     }
 
+    [HttpGet("{Id}/customtest-2")]
+    public async Task<string> Customtest2([FromBody()] string data)
+    {
+        return await _service.Customtest2(data);
+    }
+
+    [HttpGet("{Id}/custon-test")]
+    public async Task<string> CustonTest([FromBody()] string data)
+    {
+        return await _service.CustonTest(data);
+    }
+
     /// <summary>
     /// Delete one Mor
     /// </summary>
