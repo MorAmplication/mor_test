@@ -6,7 +6,6 @@ import {
   CallHandler,
 } from "@nestjs/common";
 import request from "supertest";
-import { MorganModule } from "nest-morgan";
 import { ACGuard } from "nest-access-control";
 import { DefaultAuthGuard } from "../../auth/defaultAuth.guard";
 import { ACLModule } from "../../auth/acl.module";
@@ -19,42 +18,42 @@ import { UserService } from "../user.service";
 const nonExistingId = "nonExistingId";
 const existingId = "existingId";
 const CREATE_INPUT = {
-  createdAt: new Date(),
-  firstName: "exampleFirstName",
   id: "exampleId",
-  lastName: "exampleLastName",
-  password: "examplePassword",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  firstName: "exampleFirstName",
+  lastName: "exampleLastName",
   username: "exampleUsername",
+  password: "examplePassword",
 };
 const CREATE_RESULT = {
-  createdAt: new Date(),
-  firstName: "exampleFirstName",
   id: "exampleId",
-  lastName: "exampleLastName",
-  password: "examplePassword",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  firstName: "exampleFirstName",
+  lastName: "exampleLastName",
   username: "exampleUsername",
+  password: "examplePassword",
 };
 const FIND_MANY_RESULT = [
   {
-    createdAt: new Date(),
-    firstName: "exampleFirstName",
     id: "exampleId",
-    lastName: "exampleLastName",
-    password: "examplePassword",
+    createdAt: new Date(),
     updatedAt: new Date(),
+    firstName: "exampleFirstName",
+    lastName: "exampleLastName",
     username: "exampleUsername",
+    password: "examplePassword",
   },
 ];
 const FIND_ONE_RESULT = {
-  createdAt: new Date(),
-  firstName: "exampleFirstName",
   id: "exampleId",
-  lastName: "exampleLastName",
-  password: "examplePassword",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  firstName: "exampleFirstName",
+  lastName: "exampleLastName",
   username: "exampleUsername",
+  password: "examplePassword",
 };
 
 const service = {
@@ -116,7 +115,7 @@ describe("User", () => {
         },
       ],
       controllers: [UserController],
-      imports: [MorganModule.forRoot(), ACLModule],
+      imports: [ACLModule],
     })
       .overrideGuard(DefaultAuthGuard)
       .useValue(basicAuthGuard)
@@ -180,7 +179,7 @@ describe("User", () => {
   });
 
   test("POST /users existing resource", async () => {
-    let agent = request(app.getHttpServer());
+    const agent = request(app.getHttpServer());
     await agent
       .post("/users")
       .send(CREATE_INPUT)

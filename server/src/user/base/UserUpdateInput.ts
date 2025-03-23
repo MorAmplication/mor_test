@@ -11,7 +11,8 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsOptional, IsJSON } from "class-validator";
+import { IsString, IsOptional } from "class-validator";
+import { IsJSONValue } from "@app/custom-validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
 
@@ -48,17 +49,7 @@ class UserUpdateInput {
   @Field(() => String, {
     nullable: true,
   })
-  password?: string;
-
-  @ApiProperty({
-    required: false,
-  })
-  @IsJSON()
-  @IsOptional()
-  @Field(() => GraphQLJSON, {
-    nullable: true,
-  })
-  roles?: InputJsonValue;
+  username?: string;
 
   @ApiProperty({
     required: false,
@@ -69,7 +60,17 @@ class UserUpdateInput {
   @Field(() => String, {
     nullable: true,
   })
-  username?: string;
+  password?: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsJSONValue()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  roles?: InputJsonValue;
 }
 
 export { UserUpdateInput as UserUpdateInput };
